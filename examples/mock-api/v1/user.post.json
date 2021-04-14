@@ -1,0 +1,11 @@
+{
+    "responseOptions": {
+        "delay_ms": 2000,
+        "statusCode": 200
+    },
+    "response": {
+        "success": true,
+	"foo": "bar",
+        "bar": "foo"	
+    }
+}

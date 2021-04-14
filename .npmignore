@@ -1,0 +1,6 @@
+node_modules
+servemocks.code-workspace
+.husky
+.commitlintrc.json
+.eslintrc.json
+

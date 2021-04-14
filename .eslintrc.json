@@ -1,0 +1,38 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "mocha": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": ["warn", "never"],
+        "comma-dangle": ["error", "only-multiline"],
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "valid-jsdoc": [2, {
+          "requireParamDescription": false,
+          "requireReturnDescription": false,
+          "requireReturn": false,
+          "prefer": {"returns": "return"}
+        }],
+        "require-jsdoc": [2, {
+          "require": {
+            "FunctionDeclaration": true,
+            "MethodDefinition": true,
+            "ClassDeclaration": true
+          }
+        }]
+    }
+}

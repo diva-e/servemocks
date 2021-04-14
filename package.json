@@ -1,0 +1,84 @@
+{
+  "name": "servemocks",
+  "version": "1.0.0",
+  "description": "Starts a webserver which provides a REST API derived from JSON, XML and other sample files located in a specified directory",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No test implemented yet\"",
+    "lint": "eslint cli.js src/**/*.js",
+    "lint:fix": "eslint --fix cli.js src/**/*.js",
+    "release": "standard-version",
+    "release:patch": "standard-version --release-as patch",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "prepare": "husky install"
+  },
+  "bin": {
+    "servemocks": "cli.js"
+  },
+  "keywords": [
+    "mock-server",
+    "mockserver",
+    "http-server"
+  ],
+  "lint-staged": {
+    "*.js": "eslint --fix --max-warnings 0"
+  },
+  "standard-version": {
+    "types": [
+      {
+        "type": "feat",
+        "section": "Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "chore",
+        "hidden": true
+      },
+      {
+        "type": "docs",
+        "hidden": true
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "hidden": true
+      },
+      {
+        "type": "test",
+        "hidden": true
+      }
+    ]
+  },
+  "author": "Alexander Noack <alexander.noack@diva-e.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eisverticker/servemocks.git"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^7.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "glob": "^7.1.6"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
+    "eslint": "^7.24.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "standard-version": "^9.2.0"
+  }
+}
