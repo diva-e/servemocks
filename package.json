@@ -1,6 +1,6 @@
 {
   "name": "servemocks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Starts a webserver which provides a REST API derived from JSON, XML and other sample files located in a specified directory",
   "main": "index.js",
   "scripts": {
@@ -64,7 +64,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eisverticker/servemocks.git"
+    "url": "https://github.com/diva-e/servemocks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/diva-e/servemocks/issues"
   },
   "dependencies": {
     "chalk": "^4.1.0",
