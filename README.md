@@ -29,14 +29,19 @@ Serving directory `mock-api` with servemocks would create a webserver with the f
 * **GET**   /v2/health
 * **GET**   /v2/sitemap
 
-Check the `examples` directory for more information about api conventions.
+Check the [examples](https://github.com/diva-e/servemocks/tree/main/examples) directory for more information about api conventions.
+
+## Quick Links
+
+[Contributing](/CONTRIBUTING.md) | [Powered by diva-e](https://www.diva-e.com)
+| --- | --- |
 
 ## Getting Started
 
-### Install Global (CLI)
+### Install
 
 ```bash
-# install as global package (cli usage)
+# install as global package
 npm install -g servemocks
 # or project-local
 npm install --save-dev servemocks
