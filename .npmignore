@@ -3,4 +3,4 @@ servemocks.code-workspace
 .husky
 .commitlintrc.json
 .eslintrc.json
-
+examples
