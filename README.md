@@ -3,7 +3,7 @@
 [Contributing](/CONTRIBUTING.md) | [Powered by diva-e](https://www.diva-e.com)
 | --- | --- |
 
-[![GitHub forks](https://img.shields.io/github/forks/diva-e/servemocks.svg?style=social&label=Fork)](https://github.com/diva-e/servemocks/fork) [![GitHub stars](https://img.shields.io/github/stars/diva-e/servemocks.svg?style=social&label=Star)](https://github.com/diva-e/servemocks)
+[![GitHub stars](https://img.shields.io/github/stars/diva-e/servemocks.svg?style=social&label=Star)](https://github.com/diva-e/servemocks)
 
 Starts a webserver which provides a REST API derived from JSON, XML and other sample files located in a specified directory.
 
