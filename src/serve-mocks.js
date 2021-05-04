@@ -13,7 +13,7 @@ const HttpMethod = {
 }
 
 /**
- * @param {object} mapping 
+ * @param {object} mapping
  * @return {string}
  */
 function extractHttpMethod(mapping) {
@@ -28,7 +28,7 @@ function extractHttpMethod(mapping) {
 
 // String which will be replaced by '/' in api endpoint
 // this is being used for directories which have the same name as a file like /test.jpg/medium
-// you would name that file /test.jpg---medium.jpg 
+// you would name that file /test.jpg---medium.jpg
 const SLASH_ALIAS = '---'
 
 const app = express()
@@ -36,9 +36,9 @@ app.use(cors())
 app.use(express.json())
 
 /**
- * 
+ *
  * @param {string} mockDirectory
- * @param {number} port 
+ * @param {number} port
  * @param {string} hostname
  */
 function serveMocks (mockDirectory, port, hostname) {
@@ -68,18 +68,18 @@ function serveMocks (mockDirectory, port, hostname) {
     const files = glob.sync(mockFilePattern)
 
     files.forEach(function(fileName) {
-  
+
       let mapping = fileName.replace(mockFileRoot, '').replace(SLASH_ALIAS, '/').replace(SLASH_ALIAS, '/')
       if (fileType.removeFileExtension === true) {
         mapping = mapping.replace(fileType.extension,'')
       }
-  
+
       const httpMethod = extractHttpMethod(mapping)
       const apiPath = mapping.replace(`.${httpMethod}`, '')
-  
+
       switch(httpMethod) {
       case HttpMethod.GET:
-        app.get(apiPath, function (req, res) {
+        app.get(apiPath, async (req, res) => {
           const data =  fs.readFileSync(fileName, fileType.encoding)
           let responseBody = data
           /*
@@ -90,7 +90,16 @@ function serveMocks (mockDirectory, port, hostname) {
           if (fileType.extension === '.json' && req.query.np) {
             const jsonData = JSON.parse(data)
             if (jsonData._embedded) {
-              responseBody = JSON.stringify(jsonData._embedded)
+              responseBody = JSON.stringify(jsonData._embedded, null, 2)
+            }
+          }
+          if (fileType.extension === '.mjs') {
+            const { default: module } = await import(fileName);
+            if(module) {
+              responseBody = JSON.stringify(module(req.query), null, 2)
+            }
+            else {
+              throw new Error("Could not load custom JSON generate function from file. ")
             }
           }
           console.log(`receiving GET request on ${apiPath}`)
@@ -115,7 +124,7 @@ function serveMocks (mockDirectory, port, hostname) {
       default:
         throw new Error('Unknown Http Method')
       }
-  
+
       console.log(
         '%s %s \n  ⇒ %s (%s)',
         httpMethod.toUpperCase(),
@@ -125,7 +134,7 @@ function serveMocks (mockDirectory, port, hostname) {
       )
     })
   }
-  
+
   console.log(`\nServing mocks [http://${hostname}:${port}]`)
   app.listen(port, hostname)
 }

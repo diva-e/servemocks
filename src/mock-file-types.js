@@ -8,6 +8,12 @@ const mockFileTypes = [
     removeFileExtension: true
   },
   {
+    extension: '.mjs',
+    contentType: 'application/json',
+    encoding: Encoding.UTF8,
+    removeFileExtension: true
+  },
+  {
     extension: '.xml',
     contentType: 'application/xml',
     encoding: Encoding.UTF8,
