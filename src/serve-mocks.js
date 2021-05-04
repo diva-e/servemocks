@@ -56,7 +56,7 @@ function serveMocks (mockDirectory, port, hostname) {
   if (isPathSeparatorBackslash) {
     // replace backslashes for compatibility with paths returned by glob.sync
     // which is always using slashes as path separator
-    currentWorkingDirectory = currentWorkingDirectory.replaceAll('\\', '/')
+    currentWorkingDirectory = currentWorkingDirectory.replace(/\\/g, '/')
   }
 
   const mockFileRoot = currentWorkingDirectory + mockDirectory
