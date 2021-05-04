@@ -12,8 +12,8 @@ Take a look at the the commit guidelines for more information.
 
 1. Create a fork and clone the repository for local development
 2. Create a new branch `feature/<issue>` or `bugfix/<issue>`
-2. Commit and push your changes
-3. Create a pull request on GitHub to start the code review process
+3. Commit and push your changes
+4. Create a pull request on GitHub to start the code review process
 
 Note that you should reflect a new feature in the `examples` section of this repository, this enables other developers to test it properly.
 
