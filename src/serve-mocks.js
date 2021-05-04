@@ -3,6 +3,7 @@ const cors = require('cors')
 const fs = require('fs')
 const glob = require('glob')
 const chalk = require('chalk')
+const path = require('path')
 
 const mockFileTypes = require('./mock-file-types')
 
@@ -49,7 +50,16 @@ function serveMocks (mockDirectory, port, hostname) {
     mockDirectory = mockDirectory.substr(0, mockDirectory.length - 1)
   }
 
-  const mockFileRoot = process.cwd() + mockDirectory
+  let currentWorkingDirectory = process.cwd()
+  const isPathSeparatorBackslash = path.sep === '\\' // true on windows systems
+
+  if (isPathSeparatorBackslash) {
+    // replace backslashes for compatibility with paths returned by glob.sync
+    // which is always using slashes as path separator
+    currentWorkingDirectory = currentWorkingDirectory.replaceAll('\\', '/')
+  }
+
+  const mockFileRoot = currentWorkingDirectory + mockDirectory
   console.log('\nMOCK_DIR=' + mockFileRoot + '\n')
 
   console.log(chalk.bold('Endpoints:'))
