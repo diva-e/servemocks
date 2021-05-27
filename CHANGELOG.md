@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/diva-e/servemocks/compare/v1.0.5...v1.1.0) (2021-05-27)
+
+### Features
+
+* add json-schema validation option for POST endpoints ([a3246d6](https://github.com/diva-e/servemocks/commit/a3246d68023c5b5304461635bd7f646a94d7cd4e))
+* add respondWithRequestBody option for POST endpoints ([0dc4a39](https://github.com/diva-e/servemocks/commit/0dc4a394dbac02287ef1fe350f734ecff40fdbf0))
+
 ### [1.0.5](https://github.com/diva-e/servemocks/compare/v1.0.4...v1.0.5) (2021-05-26)
 
 ### Bug Fixes
@@ -10,13 +17,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [1.0.4](https://github.com/diva-e/servemocks/compare/v1.0.3...v1.0.4) (2021-05-04)
 
-
 ### Bug Fixes
 
 * support node versions lower than 15 on windows ([2fef5a3](https://github.com/diva-e/servemocks/commit/2fef5a37c65d05eaa29664c8e3f5e039836947cf))
 
 ### [1.0.3](https://github.com/diva-e/servemocks/compare/v1.0.2...v1.0.3) (2021-05-04)
-
 
 ### Bug Fixes
 
@@ -27,7 +32,6 @@ All notable changes to this project will be documented in this file. See [standa
 ### [1.0.1](https://github.com/diva-e/servemocks/compare/v1.0.0...v1.0.1) (2021-04-14)
 
 ## 1.0.0 (2021-04-14)
-
 
 ### Features
 
