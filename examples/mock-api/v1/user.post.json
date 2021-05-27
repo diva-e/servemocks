@@ -1,11 +1,11 @@
 {
     "responseOptions": {
         "delay_ms": 2000,
-        "statusCode": 200
+        "statusCode": 201
     },
     "response": {
-        "success": true,
-	"foo": "bar",
-        "bar": "foo"	
+        "id": 20320,
+        "firstName": "Lord",
+        "lastName": "Bar"
     }
 }

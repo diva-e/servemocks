@@ -31,17 +31,18 @@ function extractHttpMethod(mapping) {
 // you would name that file /test.jpg---medium.jpg 
 const SLASH_ALIAS = '---'
 
-const app = express()
-app.use(cors())
-app.use(express.json({ limit: '20mb' }))
-
 /**
  * 
  * @param {string} mockDirectory
- * @param {number} port 
+ * @param {number} [port] 
  * @param {string} hostname
+ * @return {express}
  */
 function serveMocks (mockDirectory, port, hostname) {
+  const app = express()
+  app.use(cors())
+  app.use(express.json({ limit: '20mb' }))
+
   if (!mockDirectory.startsWith('/')) {
     mockDirectory = '/' + mockDirectory
   }
@@ -126,8 +127,14 @@ function serveMocks (mockDirectory, port, hostname) {
     })
   }
   
-  console.log(`\nServing mocks [http://${hostname}:${port}]`)
-  app.listen(port, hostname)
+  if (port && hostname) {
+    console.log(`\nServing mocks [http://${hostname}:${port}]`)
+    app.listen(port, hostname)
+  } else {
+    console.info('No port or hostname was provided, so server will not be started automatically')
+  }
+
+  return app
 }
 
 module.exports = serveMocks

@@ -4,7 +4,8 @@
   "description": "Starts a webserver which provides a REST API derived from JSON, XML and other sample files located in a specified directory",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"No test implemented yet\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "lint": "eslint cli.js src/**/*.js",
     "lint:fix": "eslint --fix cli.js src/**/*.js",
     "release": "standard-version",
@@ -81,7 +82,9 @@
     "@commitlint/config-conventional": "^12.1.1",
     "eslint": "^7.24.0",
     "husky": "^6.0.0",
+    "jest": "^27.0.1",
     "lint-staged": "^10.5.4",
-    "standard-version": "^9.2.0"
+    "standard-version": "^9.2.0",
+    "supertest": "^6.1.3"
   }
 }
