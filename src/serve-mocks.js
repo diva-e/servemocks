@@ -110,7 +110,7 @@ function serveMocks (mockDirectory, port, hostname) {
           const requestValidation = requestOptions.validation ? requestOptions.validation : {}
           const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : 2000
           const statusCode = responseOptions.statusCode ? responseOptions.statusCode : 200
-          const response = endpointParams.response ? endpointParams.response : { success: true }
+          let response = endpointParams.response ? endpointParams.response : { success: true }
           console.log(`receiving POST request on ${apiPath} with body:`, req.body)
 
           setTimeout(() => {
@@ -126,6 +126,10 @@ function serveMocks (mockDirectory, port, hostname) {
                 })
                 return
               }
+            }
+
+            if (responseOptions.respondWithRequestBody === true) {
+              response = req.body
             }
 
             res.status(statusCode).send(response)

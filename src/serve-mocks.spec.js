@@ -60,6 +60,22 @@ describe('serve-mocks', () => {
     expect(response.body).toEqual(expectedResponse)
   })
 
+  it('should respond with request body if option is set', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const randomId = Math.floor(Math.random() * 100)
+    const requestBody = {
+      id: randomId,
+      author: 'Lorem Ipsum'
+    }
+
+    const response = await request.post('/v2/book').send(requestBody)
+
+    expect(response.status).toBe(201)
+    expect(response.headers['content-type']).toBe('application/json; charset=utf-8')
+    expect(response.body).toEqual(requestBody)
+  })
+
   it('should respond with 422 unprocessable entity when posting invalid user', async () => {
     expect.assertions(1) // number of expect calls in this test
 
