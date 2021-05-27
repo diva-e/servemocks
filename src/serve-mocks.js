@@ -4,6 +4,8 @@ const fs = require('fs')
 const glob = require('glob')
 const chalk = require('chalk')
 const path = require('path')
+const Ajv = require('ajv')
+const ajv = new Ajv()
 
 const mockFileTypes = require('./mock-file-types')
 
@@ -104,11 +106,28 @@ function serveMocks (mockDirectory, port, hostname) {
         app.post(apiPath, function (req, res) {
           const endpointParams =  JSON.parse(fs.readFileSync(fileName, 'utf8'))
           const responseOptions = endpointParams.responseOptions ? endpointParams.responseOptions : {}
+          const requestOptions = endpointParams.requestOptions ? endpointParams.requestOptions : {}
+          const requestValidation = requestOptions.validation ? requestOptions.validation : {}
           const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : 2000
           const statusCode = responseOptions.statusCode ? responseOptions.statusCode : 200
           const response = endpointParams.response ? endpointParams.response : { success: true }
           console.log(`receiving POST request on ${apiPath} with body:`, req.body)
+
           setTimeout(() => {
+            // validate request body agains json schema if provided in requestOptions
+            if (requestValidation.jsonSchema) {
+              const isValid = ajv.compile(requestValidation.jsonSchema)
+              if (!isValid(req.body)) {
+                const errors = isValid.errors
+                console.info('validation of request body failed; errors:', errors)
+                res.status(422).send({ 
+                  message: 'request body is not compliant to the expected schema',
+                  errors
+                })
+                return
+              }
+            }
+
             res.status(statusCode).send(response)
           }, responseDelay)
         })

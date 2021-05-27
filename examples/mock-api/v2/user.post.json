@@ -1,0 +1,34 @@
+{
+    "requestOptions": {
+        "validation": {
+            "jsonSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    }                    
+                },
+                "required": [
+                    "id",
+                    "firstName"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "responseOptions": {
+        "delay_ms": 2000,
+        "statusCode": 201
+    },
+    "response": {
+        "id": 20320,
+        "firstName": "Lord",
+        "lastName": "Bar"
+    }
+}

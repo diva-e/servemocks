@@ -14,9 +14,9 @@ describe('serve-mocks', () => {
 
     const response = await request.get('/v1/user/1')
     const expectedUser = {
-      'id': 1,
-      'firstName': 'Max',
-      'lastName': 'Mustermann'
+      id: 1,
+      firstName: 'Max',
+      lastName: 'Mustermann'
     }
 
     expect(response.status).toBe(200)
@@ -24,19 +24,51 @@ describe('serve-mocks', () => {
     expect(response.body).toEqual(expectedUser)
   })
 
-  it('should respond with specified data when posting user', async () => {
+  it('should respond with specified data when posting valid user', async () => {
     expect.assertions(3) // number of expect calls in this test
 
-    const response = await request.post('/v1/user')
+    const response = await request.post('/v1/user').send({ foo: 'bar' })
+
     const expectedResponse = {
-      'id': 20320,
-      'firstName': 'Lord',
-      'lastName': 'Bar'
+      id: 20320,
+      firstName: 'Lord',
+      lastName: 'Bar'
     }
 
     expect(response.status).toBe(201)
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8')
     expect(response.body).toEqual(expectedResponse)
+  })
+
+  it('should respond with 201 when posting valid user', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.post('/v2/user').send({
+      id: 42,
+      firstName: 'Valid first name',
+      lastName: 'Valid last name'
+    })
+
+    const expectedResponse = {
+      id: 20320,
+      firstName: 'Lord',
+      lastName: 'Bar'
+    }
+
+    expect(response.status).toBe(201)
+    expect(response.headers['content-type']).toBe('application/json; charset=utf-8')
+    expect(response.body).toEqual(expectedResponse)
+  })
+
+  it('should respond with 422 unprocessable entity when posting invalid user', async () => {
+    expect.assertions(1) // number of expect calls in this test
+
+    const response = await request.post('/v2/user').send({
+      id: 2332,
+      firstName: 3232 // numeric value is incorrect
+    })
+
+    expect(response.status).toBe(422)
   })
 
   it('should delay response to post requests for 2 seconds', async () => {
