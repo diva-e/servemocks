@@ -44,6 +44,7 @@ function serveMocks (mockDirectory, port, hostname) {
   const app = express()
   app.use(cors())
   app.use(express.json({ limit: '20mb' }))
+  app.use(express.text({ limit: '20mb', type: ['application/xml', 'text/plain', 'text/css', 'text/html'] }))
 
   if (!mockDirectory.startsWith('/')) {
     mockDirectory = '/' + mockDirectory
@@ -129,6 +130,7 @@ function serveMocks (mockDirectory, port, hostname) {
             }
 
             if (responseOptions.respondWithRequestBody === true) {
+              res.set('Content-Type', req.get('Content-Type'))
               response = req.body
             }
 

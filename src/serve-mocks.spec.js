@@ -125,4 +125,16 @@ describe('serve-mocks', () => {
     expect(response.status).toBe(200)
     expect(response.headers['content-type']).toBe('image/png')
   })
+
+  it('should accept xml on post endpoint', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.post('/v2/sitemap')
+      .set('Content-Type', 'application/xml')
+      .send('<?xml version="1.0" encoding="utf-8"?>')
+
+    expect(response.status).toBe(201)
+    expect(response.headers['content-type']).toContain('application/xml')
+    expect(response.text).toContain('<?xml version="1.0" encoding="utf-8"?>')
+  })
 })
