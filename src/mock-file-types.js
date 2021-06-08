@@ -20,6 +20,12 @@ const mockFileTypes = [
     removeFileExtension: true
   },
   {
+    extension: '.css',
+    contentType: 'text/css',
+    encoding: Encoding.UTF8,
+    removeFileExtension: false
+  },
+  {
     extension: '.jpg',
     contentType: 'image/jpeg',
     encoding: Encoding.BINARY,

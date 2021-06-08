@@ -147,4 +147,14 @@ describe('serve-mocks', () => {
     expect(response.headers['content-type']).toBe('text/html')
     expect(response.text).toContain('<title>Servemocks</title>')
   })
+
+  it('should serve css files and keep file extension', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.get('/style.css')
+
+    expect(response.status).toBe(200)
+    expect(response.headers['content-type']).toBe('text/css')
+    expect(response.text).toContain('background-color: beige;')
+  })
 })
