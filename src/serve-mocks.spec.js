@@ -137,4 +137,14 @@ describe('serve-mocks', () => {
     expect(response.headers['content-type']).toContain('application/xml')
     expect(response.text).toContain('<?xml version="1.0" encoding="utf-8"?>')
   })
+
+  it('should serve html files', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.get('/info')
+
+    expect(response.status).toBe(200)
+    expect(response.headers['content-type']).toBe('text/html')
+    expect(response.text).toContain('<title>Servemocks</title>')
+  })
 })
