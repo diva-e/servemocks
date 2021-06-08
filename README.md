@@ -1,7 +1,7 @@
 # servemocks
 
-[Contributing](/CONTRIBUTING.md) | [Powered by diva-e](https://www.diva-e.com)
-| --- | --- |
+[Contributing](/CONTRIBUTING.md) | [Changelog](/CHANGELOG.md) | [Powered by diva-e](https://www.diva-e.com)
+| --- | --- | --- |
 
 [![GitHub stars](https://img.shields.io/github/stars/diva-e/servemocks.svg?style=social&label=Star)](https://github.com/diva-e/servemocks)
 
