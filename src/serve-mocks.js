@@ -15,7 +15,7 @@ const HttpMethod = {
 }
 
 /**
- * @param {object} mapping 
+ * @param {object} mapping
  * @return {string}
  */
 function extractHttpMethod(mapping) {
@@ -30,13 +30,12 @@ function extractHttpMethod(mapping) {
 
 // String which will be replaced by '/' in api endpoint
 // this is being used for directories which have the same name as a file like /test.jpg/medium
-// you would name that file /test.jpg---medium.jpg 
+// you would name that file /test.jpg---medium.jpg
 const SLASH_ALIAS = '---'
 
 /**
- * 
  * @param {string} mockDirectory
- * @param {number} [port] 
+ * @param {number} [port]
  * @param {string} hostname
  * @return {express}
  */
@@ -72,15 +71,15 @@ function serveMocks (mockDirectory, port, hostname) {
     const files = glob.sync(mockFilePattern)
 
     files.forEach(function(fileName) {
-  
+
       let mapping = fileName.replace(mockFileRoot, '').replace(SLASH_ALIAS, '/').replace(SLASH_ALIAS, '/')
       if (fileType.removeFileExtension === true) {
         mapping = mapping.replace(fileType.extension,'')
       }
-  
+
       const httpMethod = extractHttpMethod(mapping)
       const apiPath = mapping.replace(`.${httpMethod}`, '')
-  
+
       switch(httpMethod) {
       case HttpMethod.GET:
         app.get(apiPath, function (req, res) {
@@ -115,13 +114,13 @@ function serveMocks (mockDirectory, port, hostname) {
           console.log(`receiving POST request on ${apiPath} with body:`, req.body)
 
           setTimeout(() => {
-            // validate request body agains json schema if provided in requestOptions
+            // validate request body against json schema if provided in requestOptions
             if (requestValidation.jsonSchema) {
               const isValid = ajv.compile(requestValidation.jsonSchema)
               if (!isValid(req.body)) {
                 const errors = isValid.errors
                 console.info('validation of request body failed; errors:', errors)
-                res.status(422).send({ 
+                res.status(422).send({
                   message: 'request body is not compliant to the expected schema',
                   errors
                 })
@@ -141,7 +140,7 @@ function serveMocks (mockDirectory, port, hostname) {
       default:
         throw new Error('Unknown Http Method')
       }
-  
+
       console.log(
         '%s %s \n  ⇒ %s (%s)',
         httpMethod.toUpperCase(),
@@ -151,7 +150,7 @@ function serveMocks (mockDirectory, port, hostname) {
       )
     })
   }
-  
+
   if (port && hostname) {
     console.log(`\nServing mocks [http://${hostname}:${port}]`)
     app.listen(port, hostname)
