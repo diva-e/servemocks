@@ -6,7 +6,7 @@ const serveMocks = require('./src/serve-mocks')
 const hostname = process.env.SERVEMOCKS_HOST || '127.0.0.1'
 
 program
-  .version('1.2.0')
+  .version('1.3.1')
   .arguments('<mock-directory>')
   .option( '-p, --port <port>', 'Change webserver port')
   .action( function(mockDirectory, env) {
