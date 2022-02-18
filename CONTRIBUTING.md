@@ -49,11 +49,11 @@ Conventional Commits enable automatic changelogs and simplified publication of p
 <footer>
 ```
 
-Version Level   | Example           | Description
--------------   | -----             | -----
-Patch           | 1.0.0 --> 1.0.1   | Fixes / Patches
-Minor           | 1.1.3 --> 1.2.0   | New features
-Major           | 1.2.6 --> 2.0.0   | Breaking changes (see Type section)
+| Version Level | Example         | Description                         |
+|---------------|-----------------|-------------------------------------|
+| Patch         | 1.0.0 --> 1.0.1 | Fixes / Patches                     |
+| Minor         | 1.1.3 --> 1.2.0 | New features                        |
+| Major         | 1.2.6 --> 2.0.0 | Breaking changes (see Type section) |
 
 Subject must be written in imperative style eg:
 
