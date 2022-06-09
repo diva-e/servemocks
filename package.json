@@ -22,45 +22,6 @@
     "mockserver",
     "http-server"
   ],
-  "lint-staged": {
-    "*.js": "eslint --fix --max-warnings 0"
-  },
-  "standard-version": {
-    "types": [
-      {
-        "type": "feat",
-        "section": "Features"
-      },
-      {
-        "type": "fix",
-        "section": "Bug Fixes"
-      },
-      {
-        "type": "chore",
-        "hidden": true
-      },
-      {
-        "type": "docs",
-        "hidden": true
-      },
-      {
-        "type": "style",
-        "hidden": true
-      },
-      {
-        "type": "refactor",
-        "hidden": true
-      },
-      {
-        "type": "perf",
-        "hidden": true
-      },
-      {
-        "type": "test",
-        "hidden": true
-      }
-    ]
-  },
   "author": "Alexander Noack <alexander.noack@diva-e.com>",
   "license": "MIT",
   "repository": {
@@ -87,5 +48,48 @@
     "lint-staged": "^12.3.4",
     "standard-version": "^9.2.0",
     "supertest": "^6.1.3"
+  },
+  "lint-staged": {
+    "*.js": "eslint --fix --max-warnings 0"
+  },
+  "standard-version": {
+    "types": [
+      {
+        "type": "feat",
+        "section": "Features"
+      },
+      {
+        "type": "fix",
+        "section": "Bug Fixes"
+      },
+      {
+        "type": "build",
+        "section": "Dependency and Build-Related Updates"
+      },
+      {
+        "type": "chore",
+        "hidden": true
+      },
+      {
+        "type": "docs",
+        "hidden": true
+      },
+      {
+        "type": "style",
+        "hidden": true
+      },
+      {
+        "type": "refactor",
+        "hidden": true
+      },
+      {
+        "type": "perf",
+        "hidden": true
+      },
+      {
+        "type": "test",
+        "hidden": true
+      }
+    ]
   }
 }
