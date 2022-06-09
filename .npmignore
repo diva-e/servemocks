@@ -4,3 +4,6 @@ servemocks.code-workspace
 .commitlintrc.json
 .eslintrc.json
 examples
+.idea
+.github
+*.spec.js
