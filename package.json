@@ -2,7 +2,7 @@
   "name": "servemocks",
   "version": "1.3.3",
   "description": "Starts a webserver which provides a REST API derived from JSON, XML and other sample files located in a specified directory",
-  "main": "index.js",
+  "main": "src/public-api.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",

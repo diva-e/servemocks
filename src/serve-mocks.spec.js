@@ -1,4 +1,4 @@
-const serveMocks = require('./serve-mocks') // Link to your server file
+const { serveMocks } = require('./serve-mocks') // Link to your server file
 const supertest = require('supertest')
 
 describe('serve-mocks', () => {
