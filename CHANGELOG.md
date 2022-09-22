@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/diva-e/servemocks/compare/v1.3.3...v1.4.0) (2022-09-22)
+
+
+### Features
+
+* extract and expose createServeMocksExpressApp function ([4dfe9a9](https://github.com/diva-e/servemocks/commit/4dfe9a9eab2535c5db8ea47899cbf427c004fd1d))
+* resolve absolute path of mock directory ([859a925](https://github.com/diva-e/servemocks/commit/859a925ce33c5a47ae4050c6a75cdac9d7d7bbd0))
+
+
+### Dependency and Build-Related Updates
+
+* update npm packages ([36a2dfd](https://github.com/diva-e/servemocks/commit/36a2dfdd8093221555baefa7ab62409518dfa7c9))
+
 ### [1.3.3](https://github.com/diva-e/servemocks/compare/v1.3.2...v1.3.3) (2022-06-09)
 
 
