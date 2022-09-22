@@ -35,11 +35,9 @@ const SLASH_ALIAS = '---'
 
 /**
  * @param {string} mockDirectory
- * @param {number} [port]
- * @param {string} hostname
  * @return {express}
  */
-function serveMocks (mockDirectory, port, hostname) {
+function createServeMocksExpressApp(mockDirectory) {
   const app = express()
   app.use(cors())
   app.use(express.json({ limit: '20mb' }))
@@ -62,7 +60,7 @@ function serveMocks (mockDirectory, port, hostname) {
     currentWorkingDirectory = currentWorkingDirectory.replace(/\\/g, '/')
   }
 
-  const mockFileRoot = currentWorkingDirectory + mockDirectory
+  const mockFileRoot = path.resolve(currentWorkingDirectory + mockDirectory)
   console.log('\nMOCK_DIR=' + mockFileRoot + '\n')
 
   console.log(chalk.bold('Endpoints:'))
@@ -150,6 +148,17 @@ function serveMocks (mockDirectory, port, hostname) {
       )
     })
   }
+  return app
+}
+
+/**
+ * @param {string} mockDirectory
+ * @param {number} [port]
+ * @param {string} hostname
+ * @return {express}
+ */
+function serveMocks (mockDirectory, port, hostname) {
+  const app = createServeMocksExpressApp(mockDirectory)
 
   if (port && hostname) {
     console.log(`\nServing mocks [http://${hostname}:${port}]`)
@@ -161,4 +170,4 @@ function serveMocks (mockDirectory, port, hostname) {
   return app
 }
 
-module.exports = serveMocks
+module.exports = { serveMocks, createServeMocksExpressApp }

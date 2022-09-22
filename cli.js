@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander')
-const serveMocks = require('./src/serve-mocks')
+const { serveMocks } = require('./src/serve-mocks')
 
 const hostname = process.env.SERVEMOCKS_HOST || '127.0.0.1'
 

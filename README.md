@@ -59,6 +59,18 @@ Example:
 servemocks examples/mock-api -p 5000
 ```
 
+## Programmatic Usage
+
+Servemocks is based on express and can be mounted as a submodule inside an existing app.
+
+```js
+import { createServeMocksExpressApp } from 'servemocks';
+
+const mainApp = express();
+
+mainApp.use('/mock-api', createServeMocksExpressApp('examples/mock-api'))
+```
+
 ## License
 
 [MIT](LICENSE)
