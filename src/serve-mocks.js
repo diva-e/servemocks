@@ -60,7 +60,7 @@ function createServeMocksExpressApp(mockDirectory) {
     currentWorkingDirectory = currentWorkingDirectory.replace(/\\/g, '/')
   }
 
-  const mockFileRoot = currentWorkingDirectory + mockDirectory
+  const mockFileRoot = path.resolve(currentWorkingDirectory + mockDirectory)
   console.log('\nMOCK_DIR=' + mockFileRoot + '\n')
 
   console.log(chalk.bold('Endpoints:'))
