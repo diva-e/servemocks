@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/diva-e/servemocks/compare/v1.4.0...v1.4.1) (2023-02-20)
+
+
+### Dependency and Build-Related Updates
+
+* run npm update ([2619b26](https://github.com/diva-e/servemocks/commit/2619b26ee94d449cc6785229c8c900e39d8e8e8a))
+
 ## [1.4.0](https://github.com/diva-e/servemocks/compare/v1.3.3...v1.4.0) (2022-09-22)
 
 
