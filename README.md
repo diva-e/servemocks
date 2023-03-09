@@ -1,7 +1,7 @@
 # servemocks
 
-[Contributing](/CONTRIBUTING.md) | [Changelog](/CHANGELOG.md) | [Powered by diva-e](https://www.diva-e.com)
-| --- | --- | --- |
+| [Contributing](/CONTRIBUTING.md) | [Changelog](/CHANGELOG.md) | [Powered by diva-e](https://www.diva-e.com) |
+|----------------------------------|----------------------------|---------------------------------------------|
 
 [![GitHub stars](https://img.shields.io/github/stars/diva-e/servemocks.svg?style=social&label=Star)](https://github.com/diva-e/servemocks)
 
@@ -36,6 +36,10 @@ Serving directory `mock-api` with servemocks would create a webserver with the f
 
 Check the [examples](https://github.com/diva-e/servemocks/tree/main/examples) directory for more information about api conventions.
 
+Starting from version 2 it is also possible to produce dynamic mock responses by using an ecmascript module
+as mock file. Use the file extension `.mjs` to enable this function.
+Example: [examples/v3](https://github.com/diva-e/servemocks/tree/main/examples/v3).
+
 ## Getting Started
 
 ### Install
@@ -44,7 +48,7 @@ Check the [examples](https://github.com/diva-e/servemocks/tree/main/examples) di
 # install as global package
 npm install -g servemocks
 # or project-local
-npm install --save-dev servemocks
+npm add -D servemocks
 ```
 
 ### Usage

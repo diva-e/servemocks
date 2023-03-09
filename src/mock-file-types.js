@@ -49,4 +49,10 @@ export const mockFileTypes = [
     encoding: Encoding.BINARY,
     removeFileExtension: false
   },
+  {
+    extension: '.mjs',
+    contentType: 'application/json',
+    encoding: Encoding.UTF8,
+    removeFileExtension: true
+  },
 ]
