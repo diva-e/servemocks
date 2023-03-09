@@ -1,12 +1,12 @@
-import express, {json, text} from 'express'
+import express, { json, text } from 'express'
 import cors from 'cors'
-import {readFileSync} from 'fs'
-import {globSync} from 'glob'
+import { readFileSync } from 'fs'
+import { globSync } from 'glob'
 import chalk from 'chalk'
-import {resolve, sep} from 'path'
+import { resolve, sep } from 'path'
 import Ajv from 'ajv'
-import {mockFileTypes} from './mock-file-types.js'
-import {HttpMethod} from './utilities/http-method.js'
+import { mockFileTypes } from './mock-file-types.js'
+import { HttpMethod } from './utilities/http-method.js'
 
 const ajv = new Ajv()
 
@@ -14,11 +14,11 @@ const ajv = new Ajv()
  * @param {object} mapping
  * @return {string}
  */
-function extractHttpMethod(mapping) {
+function extractHttpMethod (mapping) {
   const supportedMethods = Object.values(HttpMethod)
 
   const potentialMethod = mapping.split('.').reduce(
-    (_, current, index, array) => index === array.length -1 ? current : 'none'
+    (_, current, index, array) => index === array.length - 1 ? current : 'none'
   )
 
   return supportedMethods.includes(potentialMethod) ? potentialMethod : HttpMethod.GET
@@ -33,7 +33,7 @@ const SLASH_ALIAS = '---'
  * @param {string} mockDirectory
  * @return {express}
  */
-export function createServeMocksExpressApp(mockDirectory) {
+export function createServeMocksExpressApp (mockDirectory) {
   const app = express()
   app.use(cors())
   app.use(json({ limit: '20mb' }))
@@ -64,20 +64,22 @@ export function createServeMocksExpressApp(mockDirectory) {
     const mockFilePattern = mockFileRoot + '/**/*' + fileType.extension
     const files = globSync(mockFilePattern)
 
-    files.forEach(function(fileName) {
-
-      let mapping = fileName.replace(mockFileRoot, '').replace(SLASH_ALIAS, '/').replace(SLASH_ALIAS, '/')
+    files.forEach(function (fileName) {
+      let mapping = fileName
+        .replace(mockFileRoot, '')
+        .replace(SLASH_ALIAS, '/')
+        .replace(SLASH_ALIAS, '/')
       if (fileType.removeFileExtension === true) {
-        mapping = mapping.replace(fileType.extension,'')
+        mapping = mapping.replace(fileType.extension, '')
       }
 
       const httpMethod = extractHttpMethod(mapping)
       const apiPath = mapping.replace(`.${httpMethod}`, '')
 
-      switch(httpMethod) {
+      switch (httpMethod) {
       case HttpMethod.GET:
         app.get(apiPath, function (req, res) {
-          const data =  readFileSync(fileName, fileType.encoding)
+          const data = readFileSync(fileName, fileType.encoding)
           let responseBody = data
           /*
              * When the request specifies the np query parameter (that stands for No Properties),
@@ -98,7 +100,7 @@ export function createServeMocksExpressApp(mockDirectory) {
         break
       case HttpMethod.POST:
         app.post(apiPath, function (req, res) {
-          const endpointParams =  JSON.parse(readFileSync(fileName, 'utf8'))
+          const endpointParams = JSON.parse(readFileSync(fileName, 'utf8'))
           const responseOptions = endpointParams.responseOptions ? endpointParams.responseOptions : {}
           const requestOptions = endpointParams.requestOptions ? endpointParams.requestOptions : {}
           const requestValidation = requestOptions.validation ? requestOptions.validation : {}
@@ -165,4 +167,3 @@ export function serveMocks (mockDirectory, port, hostname) {
 
   return app
 }
-

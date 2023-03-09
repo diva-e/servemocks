@@ -3,7 +3,7 @@ import supertest from 'supertest'
 
 describe('serve-mocks', () => {
   let request
-  
+
   beforeAll(() => {
     const app = serveMocks('examples/mock-api') // init without port and hostname
     request = supertest(app)

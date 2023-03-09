@@ -8,7 +8,7 @@
       "ecmaVersion": 2020,
       "sourceType": "module"
     },
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended", "standard"],
     "rules": {
         "indent": [
             "error",
@@ -22,6 +22,7 @@
             "error",
             "single"
         ],
+        "max-len": ["warn", 120],
         "semi": ["warn", "never"],
         "comma-dangle": ["error", "only-multiline"],
         "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
