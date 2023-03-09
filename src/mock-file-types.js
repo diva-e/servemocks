@@ -50,4 +50,3 @@ export const mockFileTypes = [
     removeFileExtension: false
   },
 ]
-
