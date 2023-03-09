@@ -1,6 +1,6 @@
-const Encoding = require('./encoding')
+import { Encoding } from './utilities/encoding.js'
 
-const mockFileTypes = [
+export const mockFileTypes = [
   {
     extension: '.json',
     contentType: 'application/json',
@@ -51,4 +51,3 @@ const mockFileTypes = [
   },
 ]
 
-module.exports = mockFileTypes
