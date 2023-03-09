@@ -31,7 +31,6 @@ NOTE: Packages should only be published based on the `main` branch
 and only maintainers (members of `npmjs.com/org/divae`) are allowed to publish new package versions.
 
 1. Run `npm run release -- --dry-run` to check which version will be created
-2. Update version in cli.js (see step 1) and commit the change
 2. Run `npm run release` to create new version including git tag, changelog entry and package.json version.
 3. Run `git push origin <tagName>` to push the new git tag
 4. Run `npm publish` to finsih the publication process

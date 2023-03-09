@@ -1,3 +1,1 @@
-const { createServeMocksExpressApp } = require('./serve-mocks')
-
-module.exports = { createServeMocksExpressApp }
+export { createServeMocksExpressApp } from './serve-mocks.js'

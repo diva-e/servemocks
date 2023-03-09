@@ -1,5 +1,5 @@
-const { serveMocks } = require('./serve-mocks') // Link to your server file
-const supertest = require('supertest')
+import { serveMocks } from './serve-mocks' // Link to your server file
+import supertest from 'supertest'
 
 describe('serve-mocks', () => {
   let request

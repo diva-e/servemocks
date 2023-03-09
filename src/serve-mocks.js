@@ -1,13 +1,13 @@
-const express = require('express')
-const cors = require('cors')
-const fs = require('fs')
-const glob = require('glob')
-const chalk = require('chalk')
-const path = require('path')
-const Ajv = require('ajv')
+import express, { json, text } from 'express'
+import cors from 'cors'
+import { readFileSync } from 'fs'
+import { globSync } from 'glob'
+import chalk from 'chalk'
+import { sep, resolve } from 'path'
+import Ajv from 'ajv'
 const ajv = new Ajv()
 
-const mockFileTypes = require('./mock-file-types')
+import { mockFileTypes } from './mock-file-types.js'
 
 const HttpMethod = {
   GET: 'get',
@@ -37,22 +37,22 @@ const SLASH_ALIAS = '---'
  * @param {string} mockDirectory
  * @return {express}
  */
-function createServeMocksExpressApp(mockDirectory) {
+export function createServeMocksExpressApp(mockDirectory) {
   const app = express()
   app.use(cors())
-  app.use(express.json({ limit: '20mb' }))
-  app.use(express.text({ limit: '20mb', type: ['application/xml', 'text/plain', 'text/css', 'text/html'] }))
+  app.use(json({ limit: '20mb' }))
+  app.use(text({ limit: '20mb', type: ['application/xml', 'text/plain', 'text/css', 'text/html'] }))
 
   if (!mockDirectory.startsWith('/')) {
     mockDirectory = '/' + mockDirectory
   }
 
   if (mockDirectory.endsWith('/')) {
-    mockDirectory = mockDirectory.substr(0, mockDirectory.length - 1)
+    mockDirectory = mockDirectory.slice(0, -1)
   }
 
   let currentWorkingDirectory = process.cwd()
-  const isPathSeparatorBackslash = path.sep === '\\' // true on windows systems
+  const isPathSeparatorBackslash = sep === '\\' // true on windows systems
 
   if (isPathSeparatorBackslash) {
     // replace backslashes for compatibility with paths returned by glob.sync
@@ -60,13 +60,13 @@ function createServeMocksExpressApp(mockDirectory) {
     currentWorkingDirectory = currentWorkingDirectory.replace(/\\/g, '/')
   }
 
-  const mockFileRoot = path.resolve(currentWorkingDirectory + mockDirectory)
+  const mockFileRoot = resolve(currentWorkingDirectory + mockDirectory)
   console.log('\nMOCK_DIR=' + mockFileRoot + '\n')
 
   console.log(chalk.bold('Endpoints:'))
   for (const fileType of mockFileTypes) {
     const mockFilePattern = mockFileRoot + '/**/*' + fileType.extension
-    const files = glob.sync(mockFilePattern)
+    const files = globSync(mockFilePattern)
 
     files.forEach(function(fileName) {
 
@@ -81,7 +81,7 @@ function createServeMocksExpressApp(mockDirectory) {
       switch(httpMethod) {
       case HttpMethod.GET:
         app.get(apiPath, function (req, res) {
-          const data =  fs.readFileSync(fileName, fileType.encoding)
+          const data =  readFileSync(fileName, fileType.encoding)
           let responseBody = data
           /*
              * When the request specifies the np query parameter (that stands for No Properties),
@@ -102,7 +102,7 @@ function createServeMocksExpressApp(mockDirectory) {
         break
       case HttpMethod.POST:
         app.post(apiPath, function (req, res) {
-          const endpointParams =  JSON.parse(fs.readFileSync(fileName, 'utf8'))
+          const endpointParams =  JSON.parse(readFileSync(fileName, 'utf8'))
           const responseOptions = endpointParams.responseOptions ? endpointParams.responseOptions : {}
           const requestOptions = endpointParams.requestOptions ? endpointParams.requestOptions : {}
           const requestValidation = requestOptions.validation ? requestOptions.validation : {}
@@ -157,7 +157,7 @@ function createServeMocksExpressApp(mockDirectory) {
  * @param {string} hostname
  * @return {express}
  */
-function serveMocks (mockDirectory, port, hostname) {
+export function serveMocks (mockDirectory, port, hostname) {
   const app = createServeMocksExpressApp(mockDirectory)
 
   if (port && hostname) {
@@ -170,4 +170,3 @@ function serveMocks (mockDirectory, port, hostname) {
   return app
 }
 
-module.exports = { serveMocks, createServeMocksExpressApp }
