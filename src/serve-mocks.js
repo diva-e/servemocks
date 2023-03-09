@@ -79,19 +79,7 @@ export function createServeMocksExpressApp (mockDirectory) {
       switch (httpMethod) {
       case HttpMethod.GET:
         app.get(apiPath, function (req, res) {
-          const data = readFileSync(fileName, fileType.encoding)
-          let responseBody = data
-          /*
-             * When the request specifies the np query parameter (that stands for No Properties),
-             * the response body is the array of embedded resources and does not include the resource properties
-             * see https://restheart.org/docs/v3/representation-format/#properties
-             */
-          if (fileType.extension === '.json' && req.query.np) {
-            const jsonData = JSON.parse(data)
-            if (jsonData._embedded) {
-              responseBody = JSON.stringify(jsonData._embedded)
-            }
-          }
+          const responseBody = readFileSync(fileName, fileType.encoding)
           console.log(`receiving GET request on ${apiPath}`)
           res.writeHead(200, { 'Content-Type': fileType.contentType })
           res.write(responseBody, fileType.encoding)
