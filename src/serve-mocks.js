@@ -1,18 +1,14 @@
-import express, { json, text } from 'express'
+import express, {json, text} from 'express'
 import cors from 'cors'
-import { readFileSync } from 'fs'
-import { globSync } from 'glob'
+import {readFileSync} from 'fs'
+import {globSync} from 'glob'
 import chalk from 'chalk'
-import { sep, resolve } from 'path'
+import {resolve, sep} from 'path'
 import Ajv from 'ajv'
+import {mockFileTypes} from './mock-file-types.js'
+import {HttpMethod} from './utilities/http-method.js'
+
 const ajv = new Ajv()
-
-import { mockFileTypes } from './mock-file-types.js'
-
-const HttpMethod = {
-  GET: 'get',
-  POST: 'post',
-}
 
 /**
  * @param {object} mapping
