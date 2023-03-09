@@ -48,7 +48,7 @@ export function createServeMocksExpressApp (mockDirectory) {
   }
 
   let currentWorkingDirectory = process.cwd()
-  const isPathSeparatorBackslash = sep === '\\' // true on windows systems
+  const isPathSeparatorBackslash = sep === '\\' // true on Windows systems
 
   if (isPathSeparatorBackslash) {
     // replace backslashes for compatibility with paths returned by glob.sync
@@ -78,12 +78,40 @@ export function createServeMocksExpressApp (mockDirectory) {
 
       switch (httpMethod) {
       case HttpMethod.GET:
-        app.get(apiPath, function (req, res) {
-          const responseBody = readFileSync(fileName, fileType.encoding)
-          console.log(`receiving GET request on ${apiPath}`)
-          res.writeHead(200, { 'Content-Type': fileType.contentType })
-          res.write(responseBody, fileType.encoding)
-          res.end()
+        app.get(apiPath, async function (req, res) {
+          let responseBody
+          let errorObject
+          console.log(chalk.blueBright(`receiving GET request on ${apiPath}`))
+          if (fileType.extension === '.mjs') {
+            const context = {
+              query: req.query || {},
+              path: req.path,
+            }
+            try {
+              const { default: module } = await import(fileName)
+              if (module) {
+                responseBody = JSON.stringify(module(context), null, 2)
+              } else {
+                errorObject = { message: 'could not execute default export of javascript module' }
+                console.error('ERROR:' + errorObject.message + ' ' +
+                  fileName + ' for GET endpoint ' + apiPath)
+              }
+            } catch (error) {
+              errorObject = error
+              console.error('ERROR: could not load javascript module ' + fileName + ' for GET endpoint ' + apiPath)
+            }
+          } else {
+            responseBody = readFileSync(fileName, fileType.encoding)
+          }
+          if (!errorObject) {
+            res.writeHead(200, { 'Content-Type': fileType.contentType })
+            res.write(responseBody, fileType.encoding)
+            res.end()
+          } else {
+            res.writeHead(500, { 'Content-Type': fileType.contentType })
+            res.write({ error: errorObject }, fileType.encoding)
+            res.end()
+          }
         })
         break
       case HttpMethod.POST:
