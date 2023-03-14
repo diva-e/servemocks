@@ -5,7 +5,9 @@ describe('serve-mocks', () => {
   let request
 
   beforeAll(() => {
-    const app = serveMocks('examples/mock-api') // init without port and hostname
+    const app = serveMocks('examples/mock-api', undefined, undefined, {
+      requestDelay_ms: 0,
+    }) // init without port and hostname
     request = supertest(app)
   })
 
@@ -16,7 +18,7 @@ describe('serve-mocks', () => {
     const expectedUser = {
       id: 1,
       firstName: 'Max',
-      lastName: 'Mustermann'
+      lastName: 'Mustermann',
     }
 
     expect(response.status).toBe(200)
@@ -32,7 +34,7 @@ describe('serve-mocks', () => {
     const expectedResponse = {
       id: 20320,
       firstName: 'Lord',
-      lastName: 'Bar'
+      lastName: 'Bar',
     }
 
     expect(response.status).toBe(201)
@@ -46,13 +48,13 @@ describe('serve-mocks', () => {
     const response = await request.post('/v2/user').send({
       id: 42,
       firstName: 'Valid first name',
-      lastName: 'Valid last name'
+      lastName: 'Valid last name',
     })
 
     const expectedResponse = {
       id: 20320,
       firstName: 'Lord',
-      lastName: 'Bar'
+      lastName: 'Bar',
     }
 
     expect(response.status).toBe(201)
@@ -66,7 +68,7 @@ describe('serve-mocks', () => {
     const randomId = Math.floor(Math.random() * 100)
     const requestBody = {
       id: randomId,
-      author: 'Lorem Ipsum'
+      author: 'Lorem Ipsum',
     }
 
     const response = await request.post('/v2/book').send(requestBody)
@@ -81,7 +83,7 @@ describe('serve-mocks', () => {
 
     const response = await request.post('/v2/user').send({
       id: 2332,
-      firstName: 3232 // numeric value is incorrect
+      firstName: 3232, // numeric value is incorrect
     })
 
     expect(response.status).toBe(422)
@@ -171,7 +173,7 @@ describe('serve-mocks', () => {
 
   it('should create dynamic response (loading as eval-like script)', async () => {
     const app = serveMocks('examples/mock-api', undefined, undefined, {
-      dynamicMockResponsesMode: 'eval'
+      dynamicMockResponsesMode: 'eval',
     }) // init without port and hostname
     request = supertest(app)
 

@@ -26,6 +26,7 @@
         "semi": ["warn", "never"],
         "comma-dangle": ["error", "only-multiline"],
         "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "no-console": "error",
         "valid-jsdoc": [2, {
           "requireParamDescription": false,
           "requireReturnDescription": false,
