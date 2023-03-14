@@ -7,6 +7,7 @@ import { resolve, sep } from 'path'
 import Ajv from 'ajv'
 import { mockFileTypes } from './mock-file-types.js'
 import { HttpMethod } from './utilities/http-method.js'
+import { runInNewContext } from 'vm'
 
 const ajv = new Ajv()
 
@@ -29,11 +30,23 @@ function extractHttpMethod (mapping) {
 // you would name that file /test.jpg---medium.jpg
 const SLASH_ALIAS = '---'
 
+export const defaultServeMocksOptions = {
+  //
+  // possible values: 'dynamicImport', 'disabled', 'eval
+  //
+  dynamicMockResponsesMode: 'dynamicImport'
+}
+
 /**
  * @param {string} mockDirectory
+ * @param {object} options
  * @return {express}
  */
-export function createServeMocksExpressApp (mockDirectory) {
+export function createServeMocksExpressApp (mockDirectory, options = {}) {
+  const effectiveOptions = {
+    ...defaultServeMocksOptions,
+    ...options
+  }
   const app = express()
   app.use(cors())
   app.use(json({ limit: '20mb' }))
@@ -82,19 +95,37 @@ export function createServeMocksExpressApp (mockDirectory) {
           let responseBody
           let errorObject
           console.log(chalk.blueBright(`receiving GET request on ${apiPath}`))
-          if (fileType.extension === '.mjs') {
+          if (fileType.extension === '.mjs' && effectiveOptions.dynamicMockResponsesMode !== 'disabled') {
             const context = {
               query: req.query || {},
               path: req.path,
+              responseBody: {
+                errorMessage: 'the mock file did not provide any responseBody'
+              },
             }
             try {
-              const { default: module } = await import(fileName)
-              if (module) {
-                responseBody = JSON.stringify(module(context), null, 2)
+              if (effectiveOptions.dynamicMockResponsesMode === 'dynamicImport') {
+                console.log('ENTER dynamicImport')
+                const { default: module } = await import(fileName)
+                if (module) {
+                  responseBody = JSON.stringify(module(context), null, 2)
+                } else {
+                  errorObject = { message: 'could not execute default export of javascript module' }
+                  console.error('ERROR:' + errorObject.message + ' ' +
+                    fileName + ' for GET endpoint ' + apiPath)
+                }
               } else {
-                errorObject = { message: 'could not execute default export of javascript module' }
-                console.error('ERROR:' + errorObject.message + ' ' +
-                  fileName + ' for GET endpoint ' + apiPath)
+                console.log('ENTER eval')
+                let scriptContent = readFileSync(fileName, fileType.encoding).toString()
+                if (scriptContent.includes('export default function')) {
+                  scriptContent = scriptContent.replace('export default function', 'globalThis.responseBody = function')
+                  scriptContent += '(globalThis.context)'
+                } else {
+                  console.warn('WARN: no "export default function" section found in ' + fileName)
+                }
+                const vmContext = { context }
+                responseBody = JSON.stringify(runInNewContext(scriptContent, vmContext), null, 2)
+                responseBody = JSON.stringify(vmContext.responseBody)
               }
             } catch (error) {
               errorObject = error
@@ -169,10 +200,11 @@ export function createServeMocksExpressApp (mockDirectory) {
  * @param {string} mockDirectory
  * @param {number} [port]
  * @param {string} hostname
+ * @param {object} options
  * @return {express}
  */
-export function serveMocks (mockDirectory, port, hostname) {
-  const app = createServeMocksExpressApp(mockDirectory)
+export function serveMocks (mockDirectory, port, hostname, options = {}) {
+  const app = createServeMocksExpressApp(mockDirectory, options)
 
   if (port && hostname) {
     console.log(`\nServing mocks [http://${hostname}:${port}]`)

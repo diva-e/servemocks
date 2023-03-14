@@ -158,7 +158,23 @@ describe('serve-mocks', () => {
     expect(response.text).toContain('background-color: beige;')
   })
 
-  it('should create dynamic response based on javascript module', async () => {
+  it('should create dynamic response (loading as es module / dynamic import)', async () => {
+    expect.assertions(4) // number of expect calls in this test
+
+    const response = await request.get('/v3/person?amount=42')
+
+    expect(response.status).toBe(200)
+    expect(response.headers['content-type']).toBe('application/json')
+    expect(response.body.items).toBeDefined()
+    expect(response.body.items.length).toBe(42)
+  })
+
+  it('should create dynamic response (loading as eval-like script)', async () => {
+    const app = serveMocks('examples/mock-api', undefined, undefined, {
+      dynamicMockResponsesMode: 'eval'
+    }) // init without port and hostname
+    request = supertest(app)
+
     expect.assertions(4) // number of expect calls in this test
 
     const response = await request.get('/v3/person?amount=42')
