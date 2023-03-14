@@ -2,13 +2,13 @@ import express, { json, text } from 'express'
 import cors from 'cors'
 import { readFileSync } from 'fs'
 import { globSync } from 'glob'
-import chalk from 'chalk'
 import { resolve, sep } from 'path'
 import Ajv from 'ajv'
 import { mockFileTypes } from './mock-file-types.js'
 import { extractHttpMethod, HttpMethod } from './utilities/http-method.js'
 import { runInNewContext } from 'vm'
 import { sleep } from './utilities/async-utilities.js'
+import { Logger } from './utilities/logger.js'
 
 const ajv = new Ajv()
 
@@ -41,6 +41,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
     ...defaultServeMocksOptions,
     ...options
   }
+  const logger = new Logger()
   const app = express()
   app.use(cors())
   app.use(json({ limit: '20mb' }))
@@ -64,9 +65,8 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
   }
 
   const mockFileRoot = resolve(currentWorkingDirectory + mockDirectory)
-  console.log('\nMOCK_DIR=' + mockFileRoot + '\n')
-
-  console.log(chalk.bold('Endpoints:'))
+  logger.info('\nMOCK_DIR=' + mockFileRoot + '\n')
+  logger.logTitle('Endpoints')
   for (const fileType of mockFileTypes) {
     const mockFilePattern = mockFileRoot + '/**/*' + fileType.extension
     const files = globSync(mockFilePattern)
@@ -86,7 +86,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
       switch (httpMethod) {
       case HttpMethod.GET:
         app.get(apiPath, async function (req, res) {
-          console.log(chalk.blueBright(`receiving GET request on ${apiPath}`))
+          logger.logRequest(HttpMethod.GET, apiPath)
           await sleep(effectiveOptions.responseDelay_ms)
           let responseBody
           let errorObject
@@ -100,13 +100,12 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
             }
             try {
               if (effectiveOptions.dynamicMockResponsesMode === 'dynamicImport') {
-                console.log('ENTER dynamicImport')
                 const { default: module } = await import(fileName)
                 if (module) {
                   responseBody = JSON.stringify(module(context), null, 2)
                 } else {
                   errorObject = { message: 'could not execute default export of javascript module' }
-                  console.error('ERROR:' + errorObject.message + ' ' +
+                  logger.error('ERROR:' + errorObject.message + ' ' +
                     fileName + ' for GET endpoint ' + apiPath)
                 }
               } else {
@@ -115,7 +114,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
                   scriptContent = scriptContent.replace('export default function', 'globalThis.responseBody = function')
                   scriptContent += '(globalThis.context)'
                 } else {
-                  console.warn('WARN: no "export default function" section found in ' + fileName)
+                  logger.warn('no "export default function" section found in ' + fileName)
                 }
                 const vmContext = { context }
                 responseBody = JSON.stringify(runInNewContext(scriptContent, vmContext), null, 2)
@@ -123,7 +122,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
               }
             } catch (error) {
               errorObject = error
-              console.error('ERROR: could not load javascript module ' + fileName + ' for GET endpoint ' + apiPath)
+              logger.error('could not load javascript module ' + fileName + ' for GET endpoint ' + apiPath)
             }
           } else {
             responseBody = readFileSync(fileName, fileType.encoding)
@@ -148,7 +147,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
           const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : effectiveOptions.responseDelay_ms
           const statusCode = responseOptions.statusCode ? responseOptions.statusCode : 200
           let response = endpointParams.response ? endpointParams.response : { success: true }
-          console.log(chalk.blueBright(`receiving POST request on ${apiPath} with body:`), req.body)
+          logger.logRequest(HttpMethod.POST, apiPath, req.body)
 
           await sleep(responseDelay)
 
@@ -157,7 +156,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
             const isValid = ajv.compile(requestValidation.jsonSchema)
             if (!isValid(req.body)) {
               const errors = isValid.errors
-              console.info('validation of request body failed; errors:', errors)
+              logger.info('validation of request body failed; errors:', errors)
               res.status(422).send({
                 message: 'request body is not compliant to the expected schema',
                 errors
@@ -178,7 +177,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
         throw new Error('Unknown Http Method')
       }
 
-      console.log(
+      logger.info(
         '%s %s \n  ⇒ %s (%s)',
         httpMethod.toUpperCase(),
         apiPath,
@@ -199,12 +198,13 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
  */
 export function serveMocks (mockDirectory, port, hostname, options = {}) {
   const app = createServeMocksExpressApp(mockDirectory, options)
+  const logger = new Logger()
 
   if (port && hostname) {
-    console.log(`\nServing mocks [http://${hostname}:${port}]`)
+    logger.info(`\nServing mocks [http://${hostname}:${port}]`)
     app.listen(port, hostname)
   } else {
-    console.info('No port or hostname was provided, so server will not be started automatically')
+    logger.warn('No port or hostname was provided, the server will not start automatically')
   }
 
   return app
