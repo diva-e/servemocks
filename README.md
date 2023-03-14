@@ -73,6 +73,7 @@ import { createServeMocksExpressApp } from 'servemocks';
 const mainApp = express();
 
 const options = {
+  responseDelay_ms: 100,
   // enable javascript code to be executed from a mock file with 
   //  .mjs file extension
   //  eval can be used as alternative strategy if dynamicImport does not work
