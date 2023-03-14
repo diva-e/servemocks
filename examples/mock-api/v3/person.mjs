@@ -2,7 +2,7 @@
  * This example shows how to create a custom api response that can react to given
  * query parameters (example: `/persons?amount=10`)
  */
-export default ({ query }) => {
+export default function ({ query }) {
 // Define a function to create a person with some random parameters
   const person = () => {
     return {

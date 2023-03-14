@@ -72,7 +72,14 @@ import { createServeMocksExpressApp } from 'servemocks';
 
 const mainApp = express();
 
-mainApp.use('/mock-api', createServeMocksExpressApp('examples/mock-api'))
+const options = {
+  // enable javascript code to be executed from a mock file with 
+  //  .mjs file extension
+  //  eval can be used as alternative strategy if dynamicImport does not work
+  dynamicMockResponsesMode: 'eval' // one of 'disabled', 'eval' and 'dynamicImport'
+}
+
+mainApp.use('/mock-api', createServeMocksExpressApp('examples/mock-api', options))
 ```
 
 ## License
