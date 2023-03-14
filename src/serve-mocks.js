@@ -8,12 +8,14 @@ import Ajv from 'ajv'
 import { mockFileTypes } from './mock-file-types.js'
 import { extractHttpMethod, HttpMethod } from './utilities/http-method.js'
 import { runInNewContext } from 'vm'
+import { sleep } from './utilities/async-utilities.js'
 
 const ajv = new Ajv()
 
 /**
- * @param {object} mapping
- * @return {string}
+ * @typedef {Object} ServemocksOptions
+ * @property {number} responseDelay_ms - default delay which will be added before sending a response
+ * @property {'eval' | 'dynamicImport' | 'disabled'} dynamicMockResponsesMode
  */
 
 // String which will be replaced by '/' in api endpoint
@@ -21,17 +23,18 @@ const ajv = new Ajv()
 // you would name that file /test.jpg---medium.jpg
 const SLASH_ALIAS = '---'
 
+/**
+ * @type {ServemocksOptions}
+ */
 export const defaultServeMocksOptions = {
-  //
-  // possible values: 'dynamicImport', 'disabled', 'eval
-  //
-  dynamicMockResponsesMode: 'dynamicImport'
+  responseDelay_ms: 100,
+  dynamicMockResponsesMode: 'eval',
 }
 
 /**
  * @param {string} mockDirectory
  * @param {object} options
- * @return {express}
+ * @return {Express}
  */
 export function createServeMocksExpressApp (mockDirectory, options = {}) {
   const effectiveOptions = {
@@ -83,9 +86,10 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
       switch (httpMethod) {
       case HttpMethod.GET:
         app.get(apiPath, async function (req, res) {
+          console.log(chalk.blueBright(`receiving GET request on ${apiPath}`))
+          await sleep(effectiveOptions.responseDelay_ms)
           let responseBody
           let errorObject
-          console.log(chalk.blueBright(`receiving GET request on ${apiPath}`))
           if (fileType.extension === '.mjs' && effectiveOptions.dynamicMockResponsesMode !== 'disabled') {
             const context = {
               query: req.query || {},
@@ -106,7 +110,6 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
                     fileName + ' for GET endpoint ' + apiPath)
                 }
               } else {
-                console.log('ENTER eval')
                 let scriptContent = readFileSync(fileName, fileType.encoding).toString()
                 if (scriptContent.includes('export default function')) {
                   scriptContent = scriptContent.replace('export default function', 'globalThis.responseBody = function')
@@ -137,38 +140,38 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
         })
         break
       case HttpMethod.POST:
-        app.post(apiPath, function (req, res) {
+        app.post(apiPath, async function (req, res) {
           const endpointParams = JSON.parse(readFileSync(fileName, 'utf8'))
           const responseOptions = endpointParams.responseOptions ? endpointParams.responseOptions : {}
           const requestOptions = endpointParams.requestOptions ? endpointParams.requestOptions : {}
           const requestValidation = requestOptions.validation ? requestOptions.validation : {}
-          const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : 2000
+          const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : effectiveOptions.responseDelay_ms
           const statusCode = responseOptions.statusCode ? responseOptions.statusCode : 200
           let response = endpointParams.response ? endpointParams.response : { success: true }
-          console.log(`receiving POST request on ${apiPath} with body:`, req.body)
+          console.log(chalk.blueBright(`receiving POST request on ${apiPath} with body:`), req.body)
 
-          setTimeout(() => {
-            // validate request body against json schema if provided in requestOptions
-            if (requestValidation.jsonSchema) {
-              const isValid = ajv.compile(requestValidation.jsonSchema)
-              if (!isValid(req.body)) {
-                const errors = isValid.errors
-                console.info('validation of request body failed; errors:', errors)
-                res.status(422).send({
-                  message: 'request body is not compliant to the expected schema',
-                  errors
-                })
-                return
-              }
+          await sleep(responseDelay)
+
+          // validate request body against json schema if provided in requestOptions
+          if (requestValidation.jsonSchema) {
+            const isValid = ajv.compile(requestValidation.jsonSchema)
+            if (!isValid(req.body)) {
+              const errors = isValid.errors
+              console.info('validation of request body failed; errors:', errors)
+              res.status(422).send({
+                message: 'request body is not compliant to the expected schema',
+                errors
+              })
+              return
             }
+          }
 
-            if (responseOptions.respondWithRequestBody === true) {
-              res.set('Content-Type', req.get('Content-Type'))
-              response = req.body
-            }
+          if (responseOptions.respondWithRequestBody === true) {
+            res.set('Content-Type', req.get('Content-Type'))
+            response = req.body
+          }
 
-            res.status(statusCode).send(response)
-          }, responseDelay)
+          res.status(statusCode).send(response)
         })
         break
       default:
@@ -192,7 +195,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
  * @param {number} [port]
  * @param {string} hostname
  * @param {object} options
- * @return {express}
+ * @return {Express}
  */
 export function serveMocks (mockDirectory, port, hostname, options = {}) {
   const app = createServeMocksExpressApp(mockDirectory, options)
