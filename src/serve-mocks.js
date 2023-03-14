@@ -6,7 +6,7 @@ import chalk from 'chalk'
 import { resolve, sep } from 'path'
 import Ajv from 'ajv'
 import { mockFileTypes } from './mock-file-types.js'
-import { HttpMethod } from './utilities/http-method.js'
+import { extractHttpMethod, HttpMethod } from './utilities/http-method.js'
 import { runInNewContext } from 'vm'
 
 const ajv = new Ajv()
@@ -15,15 +15,6 @@ const ajv = new Ajv()
  * @param {object} mapping
  * @return {string}
  */
-function extractHttpMethod (mapping) {
-  const supportedMethods = Object.values(HttpMethod)
-
-  const potentialMethod = mapping.split('.').reduce(
-    (_, current, index, array) => index === array.length - 1 ? current : 'none'
-  )
-
-  return supportedMethods.includes(potentialMethod) ? potentialMethod : HttpMethod.GET
-}
 
 // String which will be replaced by '/' in api endpoint
 // this is being used for directories which have the same name as a file like /test.jpg/medium
