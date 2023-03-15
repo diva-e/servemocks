@@ -171,6 +171,16 @@ describe('serve-mocks', () => {
     expect(response.body.items.length).toBe(42)
   })
 
+  it('should create error response if dynamic module execution failed', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.get('/v3/invalid-script')
+
+    expect(response.status).toBe(500)
+    expect(response.headers['content-type']).toBe('application/json')
+    expect(response.body.error).toBeDefined()
+  })
+
   it('should create dynamic response (loading as eval-like script)', async () => {
     const app = serveMocks('examples/mock-api', undefined, undefined, {
       dynamicMockResponsesMode: 'eval',
@@ -185,5 +195,20 @@ describe('serve-mocks', () => {
     expect(response.headers['content-type']).toBe('application/json')
     expect(response.body.items).toBeDefined()
     expect(response.body.items.length).toBe(42)
+  })
+
+  it('should create error response if script execution failed', async () => {
+    const app = serveMocks('examples/mock-api', undefined, undefined, {
+      dynamicMockResponsesMode: 'eval',
+    }) // init without port and hostname
+    request = supertest(app)
+
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.get('/v3/invalid-script')
+
+    expect(response.status).toBe(500)
+    expect(response.headers['content-type']).toBe('application/json')
+    expect(response.body.error).toBeDefined()
   })
 })

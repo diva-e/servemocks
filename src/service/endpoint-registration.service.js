@@ -1,7 +1,6 @@
-import { extractHttpMethod, HttpMethod } from './http-method.js'
-import { sleep } from './async-utilities.js'
+import { extractHttpMethod, HttpMethod } from '../utilities/http-method.js'
+import { sleep } from '../utilities/async-utilities.js'
 import { readFileSync } from 'fs'
-import { runInNewContext } from 'vm'
 import Ajv from 'ajv'
 
 const ajv = new Ajv()
@@ -11,18 +10,30 @@ const ajv = new Ajv()
 // you would name that file /test.jpg---medium.jpg
 const SLASH_ALIAS = '---'
 
-/**
- * @param {string} mockFileRoot
- * @param {{extension: string, removeFileExtension: boolean, encoding: string, contentType: string}} fileType
- * @param {Express} app
- * @param {Logger} logger
- * @param {ServemocksOptions} options
- * @return {Function}
- */
-export function registerEndpoint (mockFileRoot, fileType, app, logger, options) {
-  return function (fileName) {
+// eslint-disable-next-line require-jsdoc
+export class EndpointRegistrationService {
+  /**
+   * @param {Express} app
+   * @param {Logger} logger
+   * @param {ScriptEvaluationService} scriptEvaluationService
+   * @param {string} mockFileRoot
+   * @param {ServemocksOptions} options
+   */
+  constructor (app, logger, scriptEvaluationService, mockFileRoot, options) {
+    this.app = app
+    this.logger = logger
+    this.scriptEvaluationService = scriptEvaluationService
+    this.mockFileRoot = mockFileRoot
+    this.options = options
+  }
+
+  /**
+   * @param {string} fileName
+   * @param {{extension: string, removeFileExtension: boolean, encoding: string, contentType: string}} fileType
+   */
+  registerEndpoint (fileName, fileType) {
     let mapping = fileName
-      .replace(mockFileRoot, '')
+      .replace(this.mockFileRoot, '')
       .replace(SLASH_ALIAS, '/')
       .replace(SLASH_ALIAS, '/')
     if (fileType.removeFileExtension === true) {
@@ -34,12 +45,12 @@ export function registerEndpoint (mockFileRoot, fileType, app, logger, options) 
 
     switch (httpMethod) {
     case HttpMethod.GET:
-      app.get(apiPath, async function (req, res) {
-        logger.logRequest(HttpMethod.GET, apiPath)
-        await sleep(options.responseDelay_ms)
+      this.app.get(apiPath, async (req, res) => {
+        this.logger.logRequest(HttpMethod.GET, apiPath)
+        await sleep(this.options.responseDelay_ms)
         let responseBody
         let errorObject
-        if (fileType.extension === '.mjs' && options.dynamicMockResponsesMode !== 'disabled') {
+        if (fileType.extension === '.mjs' && this.options.dynamicMockResponsesMode !== 'disabled') {
           const context = {
             query: req.query || {},
             path: req.path,
@@ -48,30 +59,26 @@ export function registerEndpoint (mockFileRoot, fileType, app, logger, options) 
             },
           }
           try {
-            if (options.dynamicMockResponsesMode === 'dynamicImport') {
-              const { default: module } = await import(fileName)
+            if (this.options.dynamicMockResponsesMode === 'dynamicImport') {
+              // NOTE: using template syntax here to avoid webpack/angular related warning
+              const { default: module } = await import(`${fileName}`)
               if (module) {
-                responseBody = JSON.stringify(module(context), null, 2)
+                const result = module(context)
+                if (result) {
+                  responseBody = JSON.stringify(result, null, 2)
+                }
               } else {
                 errorObject = { message: 'could not execute default export of javascript module' }
-                logger.error('ERROR:' + errorObject.message + ' ' +
-                  fileName + ' for GET endpoint ' + apiPath)
+                this.logger.error(errorObject.message + ' ' + fileName + ' for GET endpoint ' + apiPath)
               }
             } else {
-              let scriptContent = readFileSync(fileName, fileType.encoding).toString()
-              if (scriptContent.includes('export default function')) {
-                scriptContent = scriptContent.replace('export default function', 'globalThis.responseBody = function')
-                scriptContent += '(globalThis.context)'
-              } else {
-                logger.warn('no "export default function" section found in ' + fileName)
-              }
-              const vmContext = { context }
-              responseBody = JSON.stringify(runInNewContext(scriptContent, vmContext), null, 2)
-              responseBody = JSON.stringify(vmContext.responseBody)
+              const result = this.scriptEvaluationService.evaluateScriptFile(fileName, fileType.encoding, context)
+              responseBody = result.responseBody
+              errorObject = result.error
             }
           } catch (error) {
             errorObject = error
-            logger.error('could not load javascript module ' + fileName + ' for GET endpoint ' + apiPath)
+            this.logger.error('could not load javascript module ' + fileName + ' for GET endpoint ' + apiPath)
           }
         } else {
           responseBody = readFileSync(fileName, fileType.encoding)
@@ -82,21 +89,21 @@ export function registerEndpoint (mockFileRoot, fileType, app, logger, options) 
           res.end()
         } else {
           res.writeHead(500, { 'Content-Type': fileType.contentType })
-          res.write({ error: errorObject }, fileType.encoding)
+          res.write(JSON.stringify({ error: errorObject }), fileType.encoding)
           res.end()
         }
       })
       break
     case HttpMethod.POST:
-      app.post(apiPath, async function (req, res) {
+      this.app.post(apiPath, async (req, res) => {
         const endpointParams = JSON.parse(readFileSync(fileName, 'utf8'))
         const responseOptions = endpointParams.responseOptions ? endpointParams.responseOptions : {}
         const requestOptions = endpointParams.requestOptions ? endpointParams.requestOptions : {}
         const requestValidation = requestOptions.validation ? requestOptions.validation : {}
-        const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : options.responseDelay_ms
+        const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : this.options.responseDelay_ms
         const statusCode = responseOptions.statusCode ? responseOptions.statusCode : 200
         let response = endpointParams.response ? endpointParams.response : { success: true }
-        logger.logRequest(HttpMethod.POST, apiPath, req.body)
+        this.logger.logRequest(HttpMethod.POST, apiPath, req.body)
 
         await sleep(responseDelay)
 
@@ -105,7 +112,7 @@ export function registerEndpoint (mockFileRoot, fileType, app, logger, options) 
           const isValid = ajv.compile(requestValidation.jsonSchema)
           if (!isValid(req.body)) {
             const errors = isValid.errors
-            logger.info('validation of request body failed; errors:', errors)
+            this.logger.info('validation of request body failed; errors:', errors)
             res.status(422).send({
               message: 'request body is not compliant to the expected schema',
               errors,
@@ -126,11 +133,11 @@ export function registerEndpoint (mockFileRoot, fileType, app, logger, options) 
       throw new Error('Unknown Http Method')
     }
 
-    logger.info(
+    this.logger.info(
       '%s %s \n  ⇒ %s (%s)',
       httpMethod.toUpperCase(),
       apiPath,
-      fileName.replace(mockFileRoot, '$MOCK_DIR'),
+      fileName.replace(this.mockFileRoot, '$MOCK_DIR'),
       fileType.contentType,
     )
   }

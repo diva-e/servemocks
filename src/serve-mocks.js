@@ -3,8 +3,9 @@ import cors from 'cors'
 import { globSync } from 'glob'
 import { resolve, sep } from 'path'
 import { mockFileTypes } from './mock-file-types.js'
-import { Logger } from './utilities/logger.js'
-import { registerEndpoint } from './utilities/register-endpoint.js'
+import { Logger } from './service/logger.js'
+import { EndpointRegistrationService } from './service/endpoint-registration.service.js'
+import { ScriptEvaluationService } from './service/script-evaluation.service.js'
 
 /**
  * @typedef {Object} ServemocksOptions
@@ -17,7 +18,7 @@ import { registerEndpoint } from './utilities/register-endpoint.js'
  */
 export const defaultServeMocksOptions = {
   responseDelay_ms: 100,
-  dynamicMockResponsesMode: 'dynamicImport',
+  dynamicMockResponsesMode: 'eval',
 }
 
 /**
@@ -31,6 +32,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
     ...options
   }
   const logger = new Logger()
+  const scriptEvaluationService = new ScriptEvaluationService(logger)
   const app = express()
   app.use(cors())
   app.use(json({ limit: '20mb' }))
@@ -54,13 +56,20 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
   }
 
   const mockFileRoot = resolve(currentWorkingDirectory + mockDirectory)
+  const endpointRegistrationService = new EndpointRegistrationService(
+    app,
+    logger,
+    scriptEvaluationService,
+    mockFileRoot,
+    effectiveOptions
+  )
+
   logger.info('\nMOCK_DIR=' + mockFileRoot + '\n')
   logger.logTitle('Endpoints')
   for (const fileType of mockFileTypes) {
     const mockFilePattern = mockFileRoot + '/**/*' + fileType.extension
     const files = globSync(mockFilePattern)
-
-    files.forEach(registerEndpoint(mockFileRoot, fileType, app, logger, effectiveOptions))
+    files.forEach(fileName => endpointRegistrationService.registerEndpoint(fileName, fileType))
   }
   return app
 }
