@@ -1,6 +1,6 @@
 {
   "name": "servemocks",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "type": "module",
   "description": "Starts a webserver which provides a REST API derived from JSON, XML and other sample files located in a specified directory",
   "main": "src/public-api.js",
