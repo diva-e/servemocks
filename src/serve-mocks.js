@@ -11,6 +11,7 @@ import { ScriptEvaluationService } from './service/script-evaluation.service.js'
  * @typedef {Object} ServemocksOptions
  * @property {number} responseDelay_ms - default delay which will be added before sending a response
  * @property {'eval' | 'dynamicImport' | 'disabled'} dynamicMockResponsesMode
+ * @property {'verbose' | 'compact' | 'disabled'} endpointRegistrationLogging
  */
 
 /**
@@ -19,6 +20,7 @@ import { ScriptEvaluationService } from './service/script-evaluation.service.js'
 export const defaultServeMocksOptions = {
   responseDelay_ms: 100,
   dynamicMockResponsesMode: 'eval',
+  endpointRegistrationLogging: 'verbose'
 }
 
 /**
@@ -27,6 +29,9 @@ export const defaultServeMocksOptions = {
  * @return {Express}
  */
 export function createServeMocksExpressApp (mockDirectory, options = {}) {
+  /**
+   * @type {ServemocksOptions}
+   **/
   const effectiveOptions = {
     ...defaultServeMocksOptions,
     ...options
@@ -70,6 +75,10 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
     const mockFilePattern = mockFileRoot + '/**/*' + fileType.extension
     const files = globSync(mockFilePattern)
     files.forEach(fileName => endpointRegistrationService.registerEndpoint(fileName, fileType))
+  }
+  if (effectiveOptions.endpointRegistrationLogging === 'compact') {
+    logger.info('...')
+    logger.info('Total number of API endpoints registered: ' + endpointRegistrationService.numberOfRegisteredEndpoints)
   }
   return app
 }

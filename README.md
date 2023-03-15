@@ -74,6 +74,9 @@ const mainApp = express();
 
 const options = {
   responseDelay_ms: 100,
+  // servemocks prints every endpoint it registers to the console
+  //  this might bloat the console log and thus you can change this setting here
+  endpointRegistrationLogging: 'compact', // default is 'verbose', use 'disabled' to not show any of those logs
   // enable javascript code to be executed from a mock file with 
   //  .mjs file extension
   //  eval can be used as alternative strategy if dynamicImport does not work

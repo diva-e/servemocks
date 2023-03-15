@@ -19,8 +19,8 @@ export default function ({ query }) {
 // create a return object
   return {
     meta: {
-      title: 'Person object',
-      description: 'Some random persons',
+      title: 'Person List',
+      description: 'Some random persons, use the "amount" query parameter to change number of persons in response',
     },
     items: persons,
   }

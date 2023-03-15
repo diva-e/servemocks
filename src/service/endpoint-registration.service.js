@@ -9,6 +9,7 @@ const ajv = new Ajv()
 // this is being used for directories which have the same name as a file like /test.jpg/medium
 // you would name that file /test.jpg---medium.jpg
 const SLASH_ALIAS = '---'
+const maxNumberOfLogEntriesInCompactMode = 2
 
 // eslint-disable-next-line require-jsdoc
 export class EndpointRegistrationService {
@@ -25,6 +26,20 @@ export class EndpointRegistrationService {
     this.scriptEvaluationService = scriptEvaluationService
     this.mockFileRoot = mockFileRoot
     this.options = options
+    this.numberOfRegisteredEndpoints = 0
+    this._isLoggingVerbose = options.endpointRegistrationLogging === 'verbose'
+    this._isLoggingCompact = options.endpointRegistrationLogging === 'compact'
+  }
+
+  /**
+   * @return {boolean}
+   * @private
+   */
+  get _isEndpointLoggingEnabled () {
+    return (
+      this._isLoggingVerbose ||
+      (this._isLoggingCompact && this.numberOfRegisteredEndpoints < maxNumberOfLogEntriesInCompactMode)
+    )
   }
 
   /**
@@ -104,6 +119,7 @@ export class EndpointRegistrationService {
         const statusCode = responseOptions.statusCode ? responseOptions.statusCode : 200
         let response = endpointParams.response ? endpointParams.response : { success: true }
         this.logger.logRequest(HttpMethod.POST, apiPath, req.body)
+        this.numberOfRegisteredEndpoints++
 
         await sleep(responseDelay)
 
@@ -133,12 +149,15 @@ export class EndpointRegistrationService {
       throw new Error('Unknown Http Method')
     }
 
-    this.logger.info(
-      '%s %s \n  ⇒ %s (%s)',
-      httpMethod.toUpperCase(),
-      apiPath,
-      fileName.replace(this.mockFileRoot, '$MOCK_DIR'),
-      fileType.contentType,
-    )
+    if (this._isEndpointLoggingEnabled) {
+      this.logger.info(
+        '%s %s \n  ⇒ %s (%s)',
+        httpMethod.toUpperCase(),
+        apiPath,
+        fileName.replace(this.mockFileRoot, '$MOCK_DIR'),
+        fileType.contentType,
+      )
+    }
+    this.numberOfRegisteredEndpoints++
   }
 }
