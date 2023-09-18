@@ -29,7 +29,7 @@ export const mockFileTypes = [
     extension: '.jpg',
     contentType: 'image/jpeg',
     encoding: Encoding.BINARY,
-    removeFileExtension: false
+    removeFileExtension: true
   },
   {
     extension: '.jpeg',
@@ -41,13 +41,19 @@ export const mockFileTypes = [
     extension: '.png',
     contentType: 'image/png',
     encoding: Encoding.BINARY,
-    removeFileExtension: false
+    removeFileExtension: true
   },
   {
     extension: '.webp',
     contentType: 'image/webp',
     encoding: Encoding.BINARY,
-    removeFileExtension: false
+    removeFileExtension: true
+  },
+  {
+    extension: '.avif',
+    contentType: 'image/avif',
+    encoding: Encoding.BINARY,
+    removeFileExtension: true
   },
   {
     extension: '.mjs',
