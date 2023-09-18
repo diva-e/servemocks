@@ -6,6 +6,7 @@ import { mockFileTypes } from './mock-file-types.js'
 import { Logger } from './service/logger.js'
 import { EndpointRegistrationService } from './service/endpoint-registration.service.js'
 import { ScriptEvaluationService } from './service/script-evaluation.service.js'
+import { compareEndpointsBySpecificity } from './utilities/sorting.js'
 
 /**
  * @typedef {Object} ServemocksOptions
@@ -74,6 +75,7 @@ export function createServeMocksExpressApp (mockDirectory, options = {}) {
   for (const fileType of mockFileTypes) {
     const mockFilePattern = mockFileRoot + '/**/*' + fileType.extension
     const files = globSync(mockFilePattern)
+    files.sort(compareEndpointsBySpecificity)
     files.forEach(fileName => endpointRegistrationService.registerEndpoint(fileName, fileType))
   }
   if (effectiveOptions.endpointRegistrationLogging === 'compact') {
