@@ -26,6 +26,20 @@ describe('serve-mocks', () => {
     expect(response.body).toEqual(expectedUser)
   })
 
+  it('should support wildcards in path', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.get('/v1/foobar123456/company')
+    const expectedUser = {
+      id: '12763298328932',
+      companyName: 'Foo Bar GmbH'
+    }
+
+    expect(response.status).toBe(200)
+    expect(response.headers['content-type']).toBe('application/json')
+    expect(response.body).toEqual(expectedUser)
+  })
+
   it('should respond with specified data when posting valid user', async () => {
     expect.assertions(3) // number of expect calls in this test
 
