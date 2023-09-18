@@ -42,6 +42,14 @@ describe('serve-mocks', () => {
     expect(response.body).toEqual(expectedResponse)
   })
 
+  it('should respond with 200 when deleting user', async () => {
+    expect.assertions(1) // number of expect calls in this test
+
+    const response = await request.delete('/v1/user')
+
+    expect(response.status).toBe(200)
+  })
+
   it('should respond with 201 when posting valid user', async () => {
     expect.assertions(3) // number of expect calls in this test
 
@@ -58,6 +66,46 @@ describe('serve-mocks', () => {
     }
 
     expect(response.status).toBe(201)
+    expect(response.headers['content-type']).toBe('application/json; charset=utf-8')
+    expect(response.body).toEqual(expectedResponse)
+  })
+
+  it('should respond with 201 when putting valid user', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.put('/v2/user').send({
+      id: 42,
+      firstName: 'Valid first name',
+      lastName: 'Valid last name',
+    })
+
+    const expectedResponse = {
+      id: 20320,
+      firstName: 'Lord',
+      lastName: 'Bar',
+    }
+
+    expect(response.status).toBe(201)
+    expect(response.headers['content-type']).toBe('application/json; charset=utf-8')
+    expect(response.body).toEqual(expectedResponse)
+  })
+
+  it('should respond with 200 when patching valid user', async () => {
+    expect.assertions(3) // number of expect calls in this test
+
+    const response = await request.patch('/v2/user').send({
+      id: 42,
+      firstName: 'Valid first name',
+      lastName: 'Valid last name',
+    })
+
+    const expectedResponse = {
+      id: 20320,
+      firstName: 'Lord',
+      lastName: 'Bar',
+    }
+
+    expect(response.status).toBe(200)
     expect(response.headers['content-type']).toBe('application/json; charset=utf-8')
     expect(response.body).toEqual(expectedResponse)
   })
