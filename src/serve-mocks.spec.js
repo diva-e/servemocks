@@ -167,7 +167,7 @@ describe('serve-mocks', () => {
     expect(response.status).toBe(404)
   })
 
-  it('should serve image binary (png) and preserve file extension', async () => {
+  it('should serve image binary (png) and remove file extension', async () => {
     expect.assertions(2) // number of expect calls in this test
 
     const response = await request.get('/image/logo.png')
