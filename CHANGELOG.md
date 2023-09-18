@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/diva-e/servemocks/compare/v1.4.1...v2.0.0) (2023-09-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove file extensions of image file extensions per default and add support for avif format
+* remove restheart specific response behaviour
+* migrate to es modules and upgrade dependencies
+
+### Features
+
+* add -c flag for compact logging when using CLI ([5d29bb0](https://github.com/diva-e/servemocks/commit/5d29bb0731ae5370aeed01ee7aa6367e0cd3fe0e))
+* add eval mode as alternative for dynamic mock responses ([ed21148](https://github.com/diva-e/servemocks/commit/ed21148ea924d5ff786bd099782ffd0c3fd42bb8))
+* add responseDelay_ms option ([cbc5856](https://github.com/diva-e/servemocks/commit/cbc5856855dadce580959cb468f8975e2ff0c93d))
+* add support for delete, put and patch methods ([ffe7b60](https://github.com/diva-e/servemocks/commit/ffe7b60096f7590d4b8da7c4e49b7d825cf638d6))
+* add support for javascript files (assets) ([afe43dd](https://github.com/diva-e/servemocks/commit/afe43dd88e89720a96d77e85aed06082df90c66e))
+* enable dynamic responses by using .mjs files ([8820386](https://github.com/diva-e/servemocks/commit/8820386a6c044bced9bf7baddec0a11d78840ac2))
+* enable endpointRegistrationLogging option for programmatic use ([175a30c](https://github.com/diva-e/servemocks/commit/175a30cb126264112f549acdadc3b9db18652c2e))
+* introduce dedicated logger ([612b772](https://github.com/diva-e/servemocks/commit/612b7720b63d41b752d9985e5823219b949eee13))
+* migrate to es modules and upgrade dependencies ([94103b4](https://github.com/diva-e/servemocks/commit/94103b493c65ba669759bec363b3fbb6ce6fe008))
+* remove file extensions of image file extensions per default and add support for avif format ([b0ee700](https://github.com/diva-e/servemocks/commit/b0ee70018e43920a0380614e6902ad0ae6593483))
+* remove restheart specific response behaviour ([df44a17](https://github.com/diva-e/servemocks/commit/df44a172b11456c72a67c27aad2a1f6c49d5cbe0))
+
+
+### Bug Fixes
+
+* sort endpoints after specificity in case multiple files match a route ([b1116c4](https://github.com/diva-e/servemocks/commit/b1116c4d816cabe6c9445aaae5bec213c08c341a)), closes [#11](https://github.com/diva-e/servemocks/issues/11)
+
+
+### Dependency and Build-Related Updates
+
+* npm update and audit fix ([0767638](https://github.com/diva-e/servemocks/commit/07676387188856433ee34b518bff7fbd22bf3561))
+
 ### [1.4.1](https://github.com/diva-e/servemocks/compare/v1.4.0...v1.4.1) (2023-02-20)
 
 
