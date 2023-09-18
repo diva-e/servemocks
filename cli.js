@@ -16,7 +16,12 @@ program
   .version(version)
   .arguments('<mock-directory>')
   .option('-p, --port <port>', 'Change webserver port')
+  .option('-c, --compact-logging', 'Limits the number of endpoints which are being printed to the console on init')
   .action(function (mockDirectory, env) {
-    serveMocks(mockDirectory, env.port || 8080, hostname)
+    const options = {}
+    if (env.compactLogging) {
+      options.endpointRegistrationLogging = 'compact'
+    }
+    serveMocks(mockDirectory, env.port || 8080, hostname, options)
   })
   .parse(process.argv)
