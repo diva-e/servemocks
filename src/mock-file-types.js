@@ -55,4 +55,10 @@ export const mockFileTypes = [
     encoding: Encoding.UTF8,
     removeFileExtension: true
   },
+  {
+    extension: '.js',
+    contentType: 'text/javascript',
+    encoding: Encoding.UTF8,
+    removeFileExtension: false
+  },
 ]
