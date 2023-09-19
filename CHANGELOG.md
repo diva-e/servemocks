@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/diva-e/servemocks/compare/v2.0.0...v2.0.1) (2023-09-19)
+
+
+### Bug Fixes
+
+* fix log message prefix for patch, put and delete requests ([921db2b](https://github.com/diva-e/servemocks/commit/921db2b05cb14e7f2ba0b98763f040c606029415))
+* log JSON requests bodies properly ([14d2098](https://github.com/diva-e/servemocks/commit/14d209873fda85a2a20af4ba87e22da87975bb63))
+
 ## [2.0.0](https://github.com/diva-e/servemocks/compare/v1.4.1...v2.0.0) (2023-09-18)
 
 
