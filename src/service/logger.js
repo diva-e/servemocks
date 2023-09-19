@@ -9,7 +9,20 @@ export class Logger {
    * @param {object} requestBody
    */
   logRequest (httpMethod, apiPath, requestBody = '') {
-    console.log(chalk.blueBright(`Log Request(${httpMethod.toUpperCase()}): ${apiPath}`), chalk.blueBright(requestBody))
+    let formattedBody = ''
+
+    if (requestBody) {
+      try {
+        formattedBody = JSON.stringify(requestBody)
+      } catch (error) {
+        formattedBody = undefined
+      }
+    }
+
+    console.log(
+      chalk.blueBright(`Log Request(${httpMethod.toUpperCase()}): ${apiPath}`),
+      formattedBody ? chalk.blueBright(formattedBody) : ''
+    )
   }
 
   /**
