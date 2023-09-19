@@ -63,16 +63,16 @@ export class EndpointRegistrationService {
       this.app.get(apiPath, this.createGetEndpoint(apiPath, fileType, fileName))
       break
     case HttpMethod.POST:
-      this.app.post(apiPath, this.createMutationEndpoint(fileName, apiPath))
+      this.app.post(apiPath, this.createMutationEndpoint(fileName, apiPath, httpMethod))
       break
     case HttpMethod.DELETE:
-      this.app.delete(apiPath, this.createMutationEndpoint(fileName, apiPath))
+      this.app.delete(apiPath, this.createMutationEndpoint(fileName, apiPath, httpMethod))
       break
     case HttpMethod.PUT:
-      this.app.put(apiPath, this.createMutationEndpoint(fileName, apiPath))
+      this.app.put(apiPath, this.createMutationEndpoint(fileName, apiPath, httpMethod))
       break
     case HttpMethod.PATCH:
-      this.app.patch(apiPath, this.createMutationEndpoint(fileName, apiPath))
+      this.app.patch(apiPath, this.createMutationEndpoint(fileName, apiPath, httpMethod))
       break
     default:
       throw new Error('Unknown Http Method')
@@ -151,9 +151,10 @@ export class EndpointRegistrationService {
    * Registers endpoints for http methods other than GET
    * @param {string} fileName
    * @param {string} apiPath
+   * @param {HttpMethod} httpMethod
    * @return {(function(*, *): Promise<void>)|*}
    */
-  createMutationEndpoint (fileName, apiPath) {
+  createMutationEndpoint (fileName, apiPath, httpMethod) {
     return async (req, res) => {
       const endpointParams = JSON.parse(readFileSync(fileName, 'utf8'))
       const responseOptions = endpointParams.responseOptions ? endpointParams.responseOptions : {}
@@ -162,7 +163,7 @@ export class EndpointRegistrationService {
       const responseDelay = responseOptions.delay_ms ? responseOptions.delay_ms : this.options.responseDelay_ms
       const statusCode = responseOptions.statusCode ? responseOptions.statusCode : 200
       let response = endpointParams.response ? endpointParams.response : { success: true }
-      this.logger.logRequest(HttpMethod.POST, apiPath, req.body)
+      this.logger.logRequest(httpMethod, apiPath, req.body)
       this.numberOfRegisteredEndpoints++
 
       await sleep(responseDelay)
