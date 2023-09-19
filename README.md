@@ -38,7 +38,7 @@ Check the [examples](https://github.com/diva-e/servemocks/tree/main/examples) di
 
 Starting from version 2 it is also possible to produce dynamic mock responses by using an ecmascript module
 as mock file. Use the file extension `.mjs` to enable this function.
-Example: [examples/v3](https://github.com/diva-e/servemocks/tree/main/examples/v3).
+Example: [examples/v3](https://github.com/diva-e/servemocks/tree/main/examples/mock-api/v3).
 
 ## Getting Started
 
@@ -54,7 +54,7 @@ npm add -D servemocks
 ### Usage
 
 ```plain
-servemocks <directory> [-p, --port=8080]
+servemocks <directory> [-p, --port=8080] [-c, --compact-logging]
 ```
 
 Example:
