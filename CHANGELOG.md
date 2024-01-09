@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/diva-e/servemocks/compare/v2.0.1...v2.1.0) (2024-01-09)
+
+
+### Features
+
+* support [any] as wildcard alias ([81a9b24](https://github.com/diva-e/servemocks/commit/81a9b242eb75ec3ee0bd4deffb5b93f2fefe313c))
+
+
+### Dependency and Build-Related Updates
+
+* run npm update ([e0ef0ad](https://github.com/diva-e/servemocks/commit/e0ef0adf4bae9e2c16b12e432fa0856a82dc95ea))
+
 ### [2.0.1](https://github.com/diva-e/servemocks/compare/v2.0.0...v2.0.1) (2023-09-19)
 
 
