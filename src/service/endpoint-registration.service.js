@@ -9,6 +9,10 @@ const ajv = new Ajv()
 // this is being used for directories which have the same name as a file like /test.jpg/medium
 // you would name that file /test.jpg---medium.jpg
 const SLASH_ALIAS = '---'
+// Windows does not support the asterisk character '*' in file names, as a result,
+//  we need to support an alias for cross-platform support
+//  NOTE: if this is changed, make sure to change it in compareEndpointsBySpecificity too
+const WILDCARD_ALIAS = '[any]'
 const maxNumberOfLogEntriesInCompactMode = 2
 
 // eslint-disable-next-line require-jsdoc
@@ -51,6 +55,7 @@ export class EndpointRegistrationService {
       .replace(this.mockFileRoot, '')
       .replace(SLASH_ALIAS, '/')
       .replace(SLASH_ALIAS, '/')
+      .replace(WILDCARD_ALIAS, '*')
     if (fileType.removeFileExtension === true) {
       mapping = mapping.replace(fileType.extension, '')
     }
