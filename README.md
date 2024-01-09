@@ -16,7 +16,8 @@ mock-api/
 ├── v1
 │   ├── user
 │   │   ├── 1.json
-│   │   └── 2.json
+│   │   ├── 2.json
+|   |   └── [any].json
 │   ├── user.json
 │   └── user.post.json
 └── v2

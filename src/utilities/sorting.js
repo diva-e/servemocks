@@ -5,8 +5,8 @@
  * @return {number}
  */
 export function compareEndpointsBySpecificity (pathA, pathB) {
-  const wildcardsA = (pathA.match(/\*/g) || [])
-  const wildcardsB = (pathB.match(/\*/g) || [])
+  const wildcardsA = (pathA.match(/(\*|\[any\])/g) || [])
+  const wildcardsB = (pathB.match(/(\*|\[any\])/g) || [])
 
   if (wildcardsA.length > 0 && wildcardsB.length > 0) {
     // If the number of wildcards is the same, compare their positions
