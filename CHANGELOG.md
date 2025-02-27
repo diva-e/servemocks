@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/diva-e/servemocks/compare/v2.1.0...v2.2.0) (2025-02-27)
+
+
+### Dependency and Build-Related Updates
+
+* run npm update ([c5bac5c](https://github.com/diva-e/servemocks/commit/c5bac5ce36e92f53f8eb4703988e444012bd30fa))
+* update commander and glob packages ([89da6bc](https://github.com/diva-e/servemocks/commit/89da6bcfd6211d102dcf1470e2224015dc224b79))
+
 ## [2.1.0](https://github.com/diva-e/servemocks/compare/v2.0.1...v2.1.0) (2024-01-09)
 
 
