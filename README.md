@@ -41,6 +41,31 @@ Starting from version 2 it is also possible to produce dynamic mock responses by
 as mock file. Use the file extension `.mjs` to enable this function.
 Example: [examples/v3](https://github.com/diva-e/servemocks/tree/main/examples/mock-api/v3).
 
+## OpenAPI Import
+
+You can import endpoints from an OpenAPI 3.x specification to generate mock files:
+
+```bash
+servemocks import <spec-file> <output-dir> [-i, --ignore-examples]
+```
+
+**Options:**
+
+`-i, --ignore-examples` - Ignore examples in the spec and generate your own
+
+**Example:**
+
+```bash
+servemocks import openapi.json ./mock-api
+```
+
+This will create mock files for each endpoint in the specification:
+
+* File naming uses explicit HTTP method (e.g., `user.get.json`, `user.post.json`)
+* Path parameters are converted to wildcards (e.g., `/pets/{petId}` → `pets/[any]/petId.get.json`)
+* Request body schemas are converted to JSON Schema validation
+* Response examples from the spec are used when available
+
 ## Getting Started
 
 ### Install
@@ -54,8 +79,16 @@ npm add -D servemocks
 
 ### Usage
 
+**Start the mock server:**
+
 ```plain
 servemocks <directory> [-p, --port=8080] [-c, --compact-logging]
+```
+
+**Import from OpenAPI spec:**
+
+```plain
+servemocks import <spec-file> <output-dir> [-i, --ignore-examples]
 ```
 
 Example:
