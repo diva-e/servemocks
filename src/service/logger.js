@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-/* eslint-disable require-jsdoc */
+/* eslint-disable jsdoc/require-jsdoc */
 /* eslint-disable no-console */
 export class Logger {
   /**
@@ -14,7 +14,7 @@ export class Logger {
     if (requestBody) {
       try {
         formattedBody = JSON.stringify(requestBody)
-      } catch (error) {
+      } catch (_error) {
         formattedBody = undefined
       }
     }

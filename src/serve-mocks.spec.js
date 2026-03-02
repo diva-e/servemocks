@@ -294,7 +294,7 @@ describe('OpenAPI import', () => {
   beforeAll(async () => {
     try {
       rmSync(testOutputDir, { recursive: true, force: true })
-    } catch (e) {
+    } catch (_e) {
       // ignore
     }
     await importOpenAPI('test-api.spec.json', testOutputDir)
@@ -303,7 +303,7 @@ describe('OpenAPI import', () => {
   afterAll(() => {
     try {
       rmSync(testOutputDir, { recursive: true, force: true })
-    } catch (e) {
+    } catch (_e) {
       // ignore
     }
   })
