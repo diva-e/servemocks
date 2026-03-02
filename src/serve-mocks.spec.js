@@ -1,5 +1,8 @@
 import { serveMocks } from './serve-mocks' // Link to your server file
 import supertest from 'supertest'
+import { existsSync, rmSync, readFileSync } from 'fs'
+import { join } from 'path'
+import { importOpenAPI } from './service/openapi-import.service.js'
 
 describe('serve-mocks', () => {
   let request
@@ -282,5 +285,127 @@ describe('serve-mocks', () => {
     expect(response.status).toBe(500)
     expect(response.headers['content-type']).toBe('application/json')
     expect(response.body.error).toBeDefined()
+  })
+})
+
+describe('OpenAPI import', () => {
+  const testOutputDir = 'examples/mock-api/test-import'
+
+  beforeAll(async () => {
+    try {
+      rmSync(testOutputDir, { recursive: true, force: true })
+    } catch (e) {
+      // ignore
+    }
+    await importOpenAPI('test-api.spec.json', testOutputDir)
+  }, 30000)
+
+  afterAll(() => {
+    try {
+      rmSync(testOutputDir, { recursive: true, force: true })
+    } catch (e) {
+      // ignore
+    }
+  })
+
+  it('should import OpenAPI spec and create mock files', async () => {
+    expect(existsSync(join(testOutputDir, 'pets.get.json'))).toBe(true)
+    expect(existsSync(join(testOutputDir, 'pets.post.json'))).toBe(true)
+    expect(existsSync(join(testOutputDir, 'pets/[any]/petId.get.json'))).toBe(true)
+  })
+
+  it('should create mock file with correct response example from spec', async () => {
+    const content = JSON.parse(readFileSync(join(testOutputDir, 'pets/[any]/petId.get.json'), 'utf8'))
+
+    expect(content.responseOptions.statusCode).toBe(200)
+    expect(content.response).toEqual({ id: 1, name: 'Fluffy' })
+  })
+
+  it('should create mock file with JSON schema for request body', async () => {
+    const content = JSON.parse(readFileSync(join(testOutputDir, 'pets.post.json'), 'utf8'))
+
+    expect(content.requestOptions.validation).toBeDefined()
+    expect(content.requestOptions.validation.jsonSchema).toBeDefined()
+    expect(content.requestOptions.validation.jsonSchema.required).toContain('name')
+  })
+
+  it('should generate example response when no example in spec', async () => {
+    const content = JSON.parse(readFileSync(join(testOutputDir, 'pets.get.json'), 'utf8'))
+
+    expect(Array.isArray(content.response)).toBe(true)
+    expect(content.response.length).toBeGreaterThan(0)
+    expect(content.response[0]).toHaveProperty('name')
+  })
+
+  it('should import with ignoreExamples option', async () => {
+    rmSync(testOutputDir, { recursive: true, force: true })
+
+    await importOpenAPI('test-api.spec.json', testOutputDir, { ignoreExamples: true })
+
+    const content = JSON.parse(readFileSync(join(testOutputDir, 'pets/[any]/petId.get.json'), 'utf8'))
+
+    expect(content.responseOptions.statusCode).toBe(200)
+  })
+
+  it('should serve imported mocks', async () => {
+    if (!existsSync(testOutputDir)) {
+      await importOpenAPI('test-api.spec.json', testOutputDir)
+    }
+
+    const app = serveMocks(testOutputDir, undefined, undefined, {
+      requestDelay_ms: 0,
+    })
+    const request = supertest(app)
+
+    const response = await request.get('/pets')
+
+    expect(response.status).toBe(200)
+    expect(response.body).toHaveProperty('response')
+    expect(Array.isArray(response.body.response)).toBe(true)
+  })
+
+  it('should validate request body against imported schema', async () => {
+    if (!existsSync(testOutputDir)) {
+      await importOpenAPI('test-api.spec.json', testOutputDir)
+    }
+
+    const app = serveMocks(testOutputDir, undefined, undefined, {
+      requestDelay_ms: 0,
+    })
+    const request = supertest(app)
+
+    const response = await request.post('/pets').send({})
+
+    expect(response.status).toBe(422)
+  })
+
+  it('should accept valid request body against imported schema', async () => {
+    if (!existsSync(testOutputDir)) {
+      await importOpenAPI('test-api.spec.json', testOutputDir)
+    }
+
+    const app = serveMocks(testOutputDir, undefined, undefined, {
+      requestDelay_ms: 0,
+    })
+    const request = supertest(app)
+
+    const response = await request.post('/pets').send({ name: 'Buddy' })
+
+    expect(response.status).toBe(201)
+  })
+
+  it('should handle path parameters with wildcard', async () => {
+    rmSync(testOutputDir, { recursive: true, force: true })
+    await importOpenAPI('test-api.spec.json', testOutputDir)
+
+    const app = serveMocks(testOutputDir, undefined, undefined, {
+      requestDelay_ms: 0,
+    })
+    const request = supertest(app)
+
+    const response = await request.get('/pets/123/petId')
+
+    expect(response.status).toBe(200)
+    expect(response.text).toContain('Fluffy')
   })
 })
