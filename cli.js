@@ -17,6 +17,8 @@ const { version } = JSON.parse(readFileSync(packageJsonPath, { encoding: 'utf-8'
 const hostname = process.env.SERVEMOCKS_HOST || '127.0.0.1'
 
 program
+  .name('servemocks')
+  .description('Conventional Mock-Server')
   .version(version)
 
 program
@@ -45,4 +47,5 @@ program
     }
     serveMocks(mockDirectory, env.port || 8080, hostname, options)
   })
-  .parse(process.argv)
+
+program.parse(process.argv)
