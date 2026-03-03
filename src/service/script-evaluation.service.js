@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { runInNewContext } from 'vm'
 
-// eslint-disable-next-line require-jsdoc
+// eslint-disable-next-line jsdoc/require-jsdoc
 export class ScriptEvaluationService {
   /**
    * @param {Logger} logger

@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: Test Pet API
+  version: 1.0.0
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      responses:
+        '200':
+          description: A paged array of pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+    post:
+      summary: Create a pet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '201':
+          description: Pet created
+  /pets/{petId}:
+    get:
+      summary: Get a pet by ID
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pet found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: 1
+                name: Fluffy

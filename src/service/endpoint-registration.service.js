@@ -15,7 +15,7 @@ const SLASH_ALIAS = '---'
 const WILDCARD_ALIAS = '[any]'
 const maxNumberOfLogEntriesInCompactMode = 2
 
-// eslint-disable-next-line require-jsdoc
+// eslint-disable-next-line jsdoc/require-jsdoc
 export class EndpointRegistrationService {
   /**
    * @param {Express} app
